@@ -314,8 +314,15 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    cursor: pointer;
+    transition: all 0.18s ease;
   }
+  .score-row:hover { border-color: var(--sa-teal); transform: translateY(-1px); box-shadow: var(--shadow-soft); }
+  .score-row.expanded { border-color: var(--sa-navy); }
   .score-row-left { flex: 1; }
+  .score-row-label-row { display: flex; align-items: center; gap: 8px; }
+  .score-row-chevron { color: var(--sa-mute); font-size: 12px; transition: transform 0.2s ease; }
+  .score-row.expanded .score-row-chevron { transform: rotate(90deg); color: var(--sa-teal-deep); }
   .score-row-label { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 700; margin-bottom: 6px; }
   .score-row.value .score-row-label { color: var(--sa-teal-deep); }
   .score-row.risk .score-row-label { color: var(--sa-navy); }
@@ -327,6 +334,82 @@
   .score-row.readiness .score-row-fill { background: var(--sa-green); }
   .score-row-value { font-family: 'Source Serif 4', serif; font-size: 38px; font-weight: 300; font-style: italic; color: var(--sa-navy); line-height: 1; margin-left: 22px; }
   .score-row-value small { font-size: 14px; color: var(--sa-mute); font-style: normal; font-family: 'Manrope', sans-serif; }
+
+  /* Detail panel */
+  .detail-panel {
+    background: white;
+    border: 1px solid var(--sa-line);
+    border-radius: 10px;
+    padding: 28px;
+    margin-bottom: 24px;
+  }
+  .detail-panel h4 {
+    font-family: 'Source Serif 4', serif;
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--sa-navy);
+    margin-bottom: 4px;
+    letter-spacing: -0.01em;
+  }
+  .detail-panel .detail-sub {
+    color: var(--sa-mute);
+    font-size: 13px;
+    margin-bottom: 22px;
+  }
+  .detail-row {
+    display: flex;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--sa-line);
+    align-items: flex-start;
+  }
+  .detail-row:last-child { border-bottom: 0; }
+  .detail-score-pill {
+    flex-shrink: 0;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--sa-cream);
+    display: grid;
+    place-items: center;
+    font-family: 'Source Serif 4', serif;
+    font-size: 26px;
+    font-style: italic;
+    font-weight: 300;
+    color: var(--sa-navy);
+    border: 2px solid var(--sa-line);
+  }
+  .detail-panel.value .detail-score-pill { background: rgba(0,176,185,0.10); border-color: rgba(0,176,185,0.3); }
+  .detail-panel.risk .detail-score-pill { background: rgba(15,45,82,0.08); border-color: rgba(15,45,82,0.2); }
+  .detail-panel.readiness .detail-score-pill { background: rgba(111,207,115,0.18); border-color: rgba(111,207,115,0.4); }
+  .detail-q-text {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--sa-navy);
+    margin-bottom: 4px;
+    line-height: 1.4;
+  }
+  .detail-q-answer {
+    font-size: 13px;
+    color: var(--sa-mute);
+    margin-bottom: 8px;
+  }
+  .detail-q-answer strong { color: var(--sa-ink); }
+  .detail-q-rationale {
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--sa-ink);
+    font-style: italic;
+    background: var(--sa-cream);
+    padding: 10px 14px;
+    border-left: 3px solid var(--sa-teal);
+    border-radius: 4px;
+  }
+  .detail-q-rationale-empty {
+    font-size: 12px;
+    color: var(--sa-mute);
+    font-style: italic;
+  }
 
   /* Matrix */
   .matrix-section { background: white; border: 1px solid var(--sa-line); border-radius: 10px; padding: 32px; margin-bottom: 32px; }
@@ -678,6 +761,25 @@ const PRELOADED = {
       r1: 5, r2: 2, r3: 5, r4: 5, r5: 1,
       d1: 3, d2: 3, d3: 5, d4: 4, d5: 4,
     },
+    rationale: {
+      v1: 'Hundreds of social workers across North Yorkshire — the largest local authority in England by area — plus the children and families they serve are the ultimate beneficiaries.',
+      v2: 'Time spent on individual information-retrieval tasks dropped from 180–200 seconds to ~20 seconds. Compounded across a working week, this is well over 20 hours per social worker reclaimed.',
+      v3: 'The mission is to spend less time at a screen and more time with children. This goes to the core of what a children\'s service exists to do — it doesn\'t get more mission-defining than that.',
+      v4: 'A 94% cost saving on the information-retrieval task category translates into material six- and seven-figure annualised savings across the workforce.',
+      v5: 'A flagship customer story published by Simpson, referenced on the Microsoft Partner page, with executive video content. Lighthouse-level visibility.',
+
+      r1: 'Children\'s social care data — including children, victims, safeguarding records, handwritten notes — is among the most sensitive personal data the public sector holds.',
+      r2: 'The AI surfaces information and creates auto-generated ecomaps — it informs the social worker, who remains the decision-maker. Low autonomy by design.',
+      r3: 'Statutory duty under the Children Act, regulated by Ofsted, with referenced precedent in the Munro Review. Decisions in this domain are highly scrutinised.',
+      r4: 'A failure in a safeguarding context isn\'t a typo — it\'s a potential safeguarding incident. Worst-plausible impact is severe.',
+      r5: 'Social workers welcomed the tool because it removes the part of the job they actively complain about — time at a screen. Adoption risk was very low.',
+
+      d1: 'A real mix — structured case management data alongside PDFs, handwritten notes and forgotten files. Mature enough to start, but with cleaning required.',
+      d2: 'Azure foundations were in place to support the build, but the engagement effectively built the Azure AI services pattern as it went.',
+      d3: 'Strong executive sponsorship from Mel Hutchinson (Assistant Director, Children and Young People\'s Service) and Jonny Hoyle (Development Lead) — both quoted in the case study.',
+      d4: 'NYC ran an AI Ethics Impact Assessment as part of the engagement — that posture is operational, not aspirational.',
+      d5: 'A proof-of-concept was the right framing and was delivered as such — full production-grade governance would still need extending.',
+    },
     headlines: [
       { stat: '94%', label: 'Cost saving on key information-retrieval tasks' },
       { stat: '20s', label: 'Down from 180–200 seconds to find a safety plan' },
@@ -789,7 +891,7 @@ function Landing({ onStartBlank, onLoadCase }) {
 // ============================================================
 // ASSESSMENT FLOW
 // ============================================================
-function Assessment({ scores, setScores, onComplete, customerName, setCustomerName, useCaseName, setUseCaseName }) {
+function Assessment({ scores, setScores, onComplete, onBack, customerName, setCustomerName, useCaseName, setUseCaseName }) {
   const [idx, setIdx] = useState(0);
   const [stage, setStage] = useState(customerName ? 'questions' : 'meta'); // 'meta' or 'questions'
 
@@ -815,6 +917,11 @@ function Assessment({ scores, setScores, onComplete, customerName, setCustomerNa
     return (
       <div className="page">
         <div className="assess-wrap">
+          <button
+            className="btn btn-ghost"
+            onClick={onBack}
+            style={{ marginBottom: 20, marginLeft: -8 }}
+          >← Back to home</button>
           <div className="dimension-badge value" style={{ background: 'rgba(15,45,82,0.08)', color: 'var(--sa-navy)' }}>
             Step 1 of 2 · Set up
           </div>
@@ -875,6 +982,11 @@ function Assessment({ scores, setScores, onComplete, customerName, setCustomerNa
   return (
     <div className="page">
       <div className="assess-wrap">
+        <button
+          className="btn btn-ghost"
+          onClick={onBack}
+          style={{ marginBottom: 20, marginLeft: -8 }}
+        >← Back to home</button>
         <div className="progress-bar">
           {FLAT_QUESTIONS.map((_, i) => {
             const cls = i < idx ? 'done' : i === idx ? 'current' : '';
@@ -961,7 +1073,9 @@ function getVerdict(value, risk, readiness) {
   };
 }
 
-function Results({ scores, customerName, useCaseName, onRestart, onExport, isPreloaded, preloadedHeadlines }) {
+function Results({ scores, customerName, useCaseName, onRestart, onExport, isPreloaded, preloadedHeadlines, rationale }) {
+  const [expandedDim, setExpandedDim] = useState(null); // 'value' | 'risk' | 'readiness' | null
+
   const valueScore = avg(scores, QUESTIONS.value.map(q => q.id));
   const riskScore = avg(scores, QUESTIONS.risk.map(q => q.id));
   const readinessScore = avg(scores, QUESTIONS.readiness.map(q => q.id));
@@ -969,15 +1083,18 @@ function Results({ scores, customerName, useCaseName, onRestart, onExport, isPre
   const verdict = getVerdict(valueScore, riskScore, readinessScore);
 
   // Matrix positioning: X = Value (1-5 left to right), Y = Risk (1-5 bottom to top, INVERTED since we want low risk at top)
-  // We invert risk so the TL = high value + low risk = the sweet spot
-  // X position: value / 5 * 100 (%)
-  // Y position from bottom: (5 - risk) / 5 * 100 (so risk=1 -> 80% up, risk=5 -> 0% up)
   const xPct = (valueScore / 5) * 100;
   const yPct = ((5 - riskScore) / 5) * 100;
   const bubbleSize = 36 + (readinessScore / 5) * 36; // 36 - 72px
 
   return (
     <div className="page">
+      <button
+        className="btn btn-ghost"
+        onClick={onRestart}
+        style={{ marginBottom: 20, marginLeft: -8 }}
+      >← Back to home</button>
+
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 32, gap: 20, flexWrap: 'wrap' }}>
         <div style={{ flex: '1 1 400px' }}>
           <div className="eyebrow">Assessment Result · {customerName}</div>
@@ -1002,13 +1119,20 @@ function Results({ scores, customerName, useCaseName, onRestart, onExport, isPre
 
         <div className="scores-list">
           {[
-            { dim: 'value', label: 'Value', score: valueScore, max: 5 },
-            { dim: 'risk', label: 'Risk', score: riskScore, max: 5 },
-            { dim: 'readiness', label: 'Readiness', score: readinessScore, max: 5 },
+            { dim: 'value', label: 'Value', score: valueScore, max: 5, hint: 'Click to see how this score is built' },
+            { dim: 'risk', label: 'Risk', score: riskScore, max: 5, hint: 'Click to see how this score is built' },
+            { dim: 'readiness', label: 'Readiness', score: readinessScore, max: 5, hint: 'Click to see how this score is built' },
           ].map(s => (
-            <div key={s.dim} className={`score-row ${s.dim}`}>
+            <div
+              key={s.dim}
+              className={`score-row ${s.dim} ${expandedDim === s.dim ? 'expanded' : ''}`}
+              onClick={() => setExpandedDim(expandedDim === s.dim ? null : s.dim)}
+            >
               <div className="score-row-left">
-                <div className="score-row-label">{s.label}</div>
+                <div className="score-row-label-row">
+                  <div className="score-row-label">{s.label}</div>
+                  <span className="score-row-chevron">▸</span>
+                </div>
                 <div className="score-row-meter">
                   <div className="score-row-fill" style={{ width: `${(s.score/s.max)*100}%` }} />
                 </div>
@@ -1018,6 +1142,45 @@ function Results({ scores, customerName, useCaseName, onRestart, onExport, isPre
           ))}
         </div>
       </div>
+
+      {expandedDim && (
+        <div className={`detail-panel ${expandedDim}`}>
+          <h4>{
+            expandedDim === 'value' ? 'How the Value score is built'
+            : expandedDim === 'risk' ? 'How the Risk score is built'
+            : 'How the Readiness score is built'
+          }</h4>
+          <p className="detail-sub">
+            {expandedDim === 'value' && 'Five questions on reach, time, outcomes, financial impact and visibility.'}
+            {expandedDim === 'risk' && 'Five questions on data sensitivity, autonomy, regulation, failure impact and workforce reception.'}
+            {expandedDim === 'readiness' && 'Five questions on data, platform, sponsorship, governance and time-to-start.'}
+          </p>
+
+          {QUESTIONS[expandedDim].map(q => {
+            const answer = scores[q.id];
+            const opt = q.scale.find(o => o.v === answer);
+            const note = rationale && rationale[q.id];
+            return (
+              <div key={q.id} className="detail-row">
+                <div className="detail-score-pill">{answer || '—'}</div>
+                <div style={{ flex: 1 }}>
+                  <div className="detail-q-text">{q.text}</div>
+                  {opt && (
+                    <div className="detail-q-answer">
+                      Answer: <strong>{opt.label}</strong> — {opt.desc}
+                    </div>
+                  )}
+                  {note ? (
+                    <div className="detail-q-rationale">"{note}"</div>
+                  ) : (
+                    <div className="detail-q-rationale-empty">No rationale captured for this question.</div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
 
       <div className="matrix-section">
         <h3>Value vs Risk — sized by Readiness</h3>
@@ -1093,7 +1256,7 @@ function Results({ scores, customerName, useCaseName, onRestart, onExport, isPre
 // ============================================================
 // PPTX EXPORT
 // ============================================================
-function exportPpt(scores, customerName, useCaseName, isPreloaded, preloadedHeadlines) {
+function exportPpt(scores, customerName, useCaseName, isPreloaded, preloadedHeadlines, rationale) {
   const pptx = new PptxGenJS();
   pptx.title = `${customerName} — AI Use Case Assessment`;
   pptx.author = 'Simpson Associates';
@@ -1159,7 +1322,7 @@ function exportPpt(scores, customerName, useCaseName, isPreloaded, preloadedHead
 
   // Footer
   s2.addText('Simpson Associates · AI Use Case Prioritiser', { x: 0.6, y: 7.1, w: 8, h: 0.3, fontSize: 9, color: MUTE, fontFace: 'Calibri' });
-  s2.addText('Page 2 of 4', { x: 11, y: 7.1, w: 1.7, h: 0.3, fontSize: 9, color: MUTE, fontFace: 'Calibri', align: 'right' });
+  s2.addText('Page 2 of 5', { x: 11, y: 7.1, w: 1.7, h: 0.3, fontSize: 9, color: MUTE, fontFace: 'Calibri', align: 'right' });
 
   // ---------- SLIDE 3: SCORE BREAKDOWN ----------
   const s3 = pptx.addSlide();
@@ -1195,7 +1358,7 @@ function exportPpt(scores, customerName, useCaseName, isPreloaded, preloadedHead
 
   // Footer
   s3.addText('Simpson Associates · AI Use Case Prioritiser', { x: 0.6, y: 7.1, w: 8, h: 0.3, fontSize: 9, color: MUTE, fontFace: 'Calibri' });
-  s3.addText('Page 3 of 4', { x: 11, y: 7.1, w: 1.7, h: 0.3, fontSize: 9, color: MUTE, fontFace: 'Calibri', align: 'right' });
+  s3.addText('Page 3 of 5', { x: 11, y: 7.1, w: 1.7, h: 0.3, fontSize: 9, color: MUTE, fontFace: 'Calibri', align: 'right' });
 
   // ---------- SLIDE 4: MATRIX ----------
   const s4 = pptx.addSlide();
@@ -1271,7 +1434,76 @@ function exportPpt(scores, customerName, useCaseName, isPreloaded, preloadedHead
 
   // Footer
   s4.addText('Simpson Associates · AI Use Case Prioritiser', { x: 0.6, y: 7.1, w: 8, h: 0.3, fontSize: 9, color: MUTE, fontFace: 'Calibri' });
-  s4.addText('Page 4 of 4', { x: 11, y: 7.1, w: 1.7, h: 0.3, fontSize: 9, color: MUTE, fontFace: 'Calibri', align: 'right' });
+  s4.addText('Page 4 of 5', { x: 11, y: 7.1, w: 1.7, h: 0.3, fontSize: 9, color: MUTE, fontFace: 'Calibri', align: 'right' });
+
+  // ---------- SLIDE 5: QUESTION-BY-QUESTION DETAIL ----------
+  const s5 = pptx.addSlide();
+  s5.background = { color: PAPER };
+
+  s5.addText('SCORING DETAIL', { x: 0.6, y: 0.4, w: 10, h: 0.3, fontSize: 11, color: TEAL, fontFace: 'Calibri', bold: true, charSpacing: 3 });
+  s5.addText('How each score is built', { x: 0.6, y: 0.7, w: 12, h: 0.5, fontSize: 24, color: NAVY, fontFace: 'Georgia' });
+
+  // Three columns
+  const colData = [
+    { dim: 'value', label: 'VALUE', colour: TEAL, qs: QUESTIONS.value },
+    { dim: 'risk', label: 'RISK', colour: NAVY, qs: QUESTIONS.risk },
+    { dim: 'readiness', label: 'READINESS', colour: '4A8E51', qs: QUESTIONS.readiness },
+  ];
+
+  const colW = 4.1;
+  const colY = 1.5;
+  const colX0 = 0.6;
+  const colH = 5.5;
+
+  colData.forEach((col, ci) => {
+    const x = colX0 + ci * (colW + 0.05);
+
+    // Column header
+    s5.addShape(pptx.ShapeType.rect, { x, y: colY, w: colW, h: 0.4, fill: { color: col.colour }, line: { color: col.colour } });
+    s5.addText(col.label, { x: x + 0.2, y: colY + 0.05, w: colW - 0.4, h: 0.3, fontSize: 11, color: 'FFFFFF', fontFace: 'Calibri', bold: true, charSpacing: 3 });
+
+    // 5 questions stacked
+    col.qs.forEach((q, qi) => {
+      const qy = colY + 0.5 + qi * 1.0;
+      const score = scores[q.id];
+      const opt = q.scale.find(o => o.v === score);
+      const note = rationale && rationale[q.id];
+
+      // Card background
+      s5.addShape(pptx.ShapeType.rect, { x, y: qy, w: colW, h: 0.95, fill: { color: 'FFFFFF' }, line: { color: 'E3E1D8' } });
+
+      // Score pill
+      s5.addShape(pptx.ShapeType.ellipse, { x: x + 0.15, y: qy + 0.18, w: 0.55, h: 0.55, fill: { color: 'F7F5EF' }, line: { color: col.colour, width: 1.5 } });
+      s5.addText(`${score || '—'}`, { x: x + 0.15, y: qy + 0.18, w: 0.55, h: 0.55, fontSize: 18, color: NAVY, fontFace: 'Georgia', italic: true, align: 'center', valign: 'middle' });
+
+      // Smart truncation — break at word boundaries
+      const truncate = (str, maxLen) => {
+        if (str.length <= maxLen) return str;
+        const cut = str.substring(0, maxLen);
+        const lastSpace = cut.lastIndexOf(' ');
+        return (lastSpace > maxLen * 0.6 ? cut.substring(0, lastSpace) : cut) + '…';
+      };
+
+      // Question summary
+      const qShort = truncate(q.text, 65);
+      s5.addText(qShort, { x: x + 0.8, y: qy + 0.08, w: colW - 0.95, h: 0.34, fontSize: 9, color: NAVY, fontFace: 'Calibri', bold: true });
+
+      // Answer label
+      if (opt) {
+        s5.addText(opt.label, { x: x + 0.8, y: qy + 0.4, w: colW - 0.95, h: 0.22, fontSize: 8, color: col.colour, fontFace: 'Calibri', bold: true });
+      }
+
+      // Rationale (or empty placeholder)
+      if (note) {
+        const noteShort = truncate(note, 160);
+        s5.addText(noteShort, { x: x + 0.8, y: qy + 0.6, w: colW - 0.95, h: 0.32, fontSize: 7.5, color: MUTE, fontFace: 'Calibri', italic: true, valign: 'top' });
+      }
+    });
+  });
+
+  // Footer
+  s5.addText('Simpson Associates · AI Use Case Prioritiser', { x: 0.6, y: 7.1, w: 8, h: 0.3, fontSize: 9, color: MUTE, fontFace: 'Calibri' });
+  s5.addText('Page 5 of 5', { x: 11, y: 7.1, w: 1.7, h: 0.3, fontSize: 9, color: MUTE, fontFace: 'Calibri', align: 'right' });
 
   // Save
   const safeName = customerName.replace(/[^a-z0-9]/gi, '_');
@@ -1288,6 +1520,7 @@ function App() {
   const [useCaseName, setUseCaseName] = useState('');
   const [isPreloaded, setIsPreloaded] = useState(false);
   const [preloadedHeadlines, setPreloadedHeadlines] = useState(null);
+  const [rationale, setRationale] = useState(null);
 
   const startBlank = () => {
     setScores({});
@@ -1295,6 +1528,7 @@ function App() {
     setUseCaseName('');
     setIsPreloaded(false);
     setPreloadedHeadlines(null);
+    setRationale(null);
     setStage('assess');
   };
 
@@ -1305,6 +1539,7 @@ function App() {
     setUseCaseName(c.useCase);
     setIsPreloaded(true);
     setPreloadedHeadlines(c.headlines);
+    setRationale(c.rationale || null);
     setStage('results');
   };
 
@@ -1315,10 +1550,11 @@ function App() {
     setUseCaseName('');
     setIsPreloaded(false);
     setPreloadedHeadlines(null);
+    setRationale(null);
   };
 
   const handleExport = () => {
-    exportPpt(scores, customerName, useCaseName, isPreloaded, preloadedHeadlines);
+    exportPpt(scores, customerName, useCaseName, isPreloaded, preloadedHeadlines, rationale);
   };
 
   return (
@@ -1336,6 +1572,7 @@ function App() {
           scores={scores}
           setScores={setScores}
           onComplete={() => setStage('results')}
+          onBack={restart}
           customerName={customerName}
           setCustomerName={setCustomerName}
           useCaseName={useCaseName}
@@ -1351,6 +1588,7 @@ function App() {
           onExport={handleExport}
           isPreloaded={isPreloaded}
           preloadedHeadlines={preloadedHeadlines}
+          rationale={rationale}
         />
       )}
 
