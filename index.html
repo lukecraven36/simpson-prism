@@ -1,0 +1,1370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI Use Case Prioritiser | Simpson Associates</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Source+Serif+4:opsz,wght@8..60,300;8..60,400;8..60,600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/gitbrent/PptxGenJS@v3.12.0/dist/pptxgen.bundle.js"></script>
+<style>
+  :root {
+    --sa-navy: #0F2D52;
+    --sa-navy-deep: #081A33;
+    --sa-teal: #00B0B9;
+    --sa-teal-deep: #008B92;
+    --sa-green: #6FCF73;
+    --sa-coral: #FF6B5B;
+    --sa-amber: #F4B73E;
+    --sa-cream: #F7F5EF;
+    --sa-paper: #FAFAF7;
+    --sa-ink: #0B1726;
+    --sa-mute: #5A6573;
+    --sa-line: #E3E1D8;
+    --shadow-soft: 0 1px 2px rgba(11,23,38,0.04), 0 8px 24px rgba(11,23,38,0.06);
+    --shadow-lift: 0 4px 12px rgba(11,23,38,0.08), 0 24px 48px rgba(11,23,38,0.12);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { font-family: 'Manrope', system-ui, sans-serif; background: var(--sa-paper); color: var(--sa-ink); -webkit-font-smoothing: antialiased; }
+  #root { min-height: 100vh; }
+
+  /* Hex motif background — subtle */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: 
+      radial-gradient(circle at 10% 5%, rgba(0,176,185,0.04) 0, transparent 35%),
+      radial-gradient(circle at 90% 90%, rgba(15,45,82,0.04) 0, transparent 40%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .app { position: relative; z-index: 1; }
+
+  /* Header */
+  .topbar {
+    background: var(--sa-navy);
+    color: white;
+    padding: 18px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 3px solid var(--sa-teal);
+  }
+  .brand { display: flex; align-items: center; gap: 14px; }
+  .brand-mark {
+    width: 38px; height: 44px;
+    display: grid; place-items: center;
+    position: relative;
+  }
+  .brand-mark svg { width: 100%; height: 100%; }
+  .brand-text { display: flex; flex-direction: column; line-height: 1.05; }
+  .brand-text .sa { font-weight: 800; font-size: 18px; letter-spacing: 0.5px; }
+  .brand-text .sub { font-size: 11px; color: rgba(255,255,255,0.65); letter-spacing: 1.2px; text-transform: uppercase; font-weight: 500; }
+  .topbar-right { display: flex; align-items: center; gap: 20px; font-size: 13px; color: rgba(255,255,255,0.75); }
+  .pill { background: rgba(0,176,185,0.18); color: var(--sa-teal); padding: 5px 12px; border-radius: 999px; font-size: 11px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; border: 1px solid rgba(0,176,185,0.35); }
+
+  /* Page */
+  .page { max-width: 1180px; margin: 0 auto; padding: 48px 40px 80px; }
+
+  /* Landing */
+  .hero {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 60px;
+    align-items: center;
+    margin-bottom: 60px;
+  }
+  .eyebrow { color: var(--sa-teal-deep); font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 16px; }
+  h1 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 52px;
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--sa-navy);
+    margin-bottom: 20px;
+  }
+  h1 em { font-style: italic; color: var(--sa-teal-deep); }
+  .lede { font-size: 18px; line-height: 1.55; color: var(--sa-mute); max-width: 520px; margin-bottom: 32px; }
+  .cta-row { display: flex; gap: 14px; flex-wrap: wrap; }
+  .btn {
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 14px 26px;
+    border-radius: 6px;
+    transition: all 0.18s ease;
+    letter-spacing: 0.2px;
+  }
+  .btn-primary {
+    background: var(--sa-navy);
+    color: white;
+  }
+  .btn-primary:hover { background: var(--sa-navy-deep); transform: translateY(-1px); }
+  .btn-secondary {
+    background: white;
+    color: var(--sa-navy);
+    border: 1.5px solid var(--sa-navy);
+  }
+  .btn-secondary:hover { background: var(--sa-navy); color: white; }
+  .btn-ghost {
+    background: transparent;
+    color: var(--sa-navy);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    padding: 14px 8px;
+  }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* Hex visual on right */
+  .hex-stack {
+    position: relative;
+    height: 440px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .hex {
+    position: absolute;
+    width: 140px; height: 161px;
+    display: grid; place-items: center;
+    color: white;
+    font-weight: 700;
+    text-align: center;
+    padding: 0 16px;
+    line-height: 1.2;
+  }
+  .hex svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .hex span { position: relative; z-index: 1; font-size: 13px; letter-spacing: 0.5px; text-transform: uppercase; }
+  .hex.value { background: transparent; left: 35%; top: 20%; }
+  .hex.value svg path { fill: var(--sa-teal); }
+  .hex.risk { left: 55%; top: 40%; }
+  .hex.risk svg path { fill: var(--sa-navy); }
+  .hex.readiness { left: 40%; top: 60%; }
+  .hex.readiness svg path { fill: var(--sa-green); }
+
+  /* Cards row */
+  .three-up { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-top: 16px; }
+  .card {
+    background: white;
+    border: 1px solid var(--sa-line);
+    border-radius: 8px;
+    padding: 26px 24px;
+    box-shadow: var(--shadow-soft);
+    position: relative;
+    overflow: hidden;
+  }
+  .card .stripe {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--sa-teal);
+  }
+  .card.value .stripe { background: var(--sa-teal); }
+  .card.risk .stripe { background: var(--sa-navy); }
+  .card.readiness .stripe { background: var(--sa-green); }
+  .card-num { font-family: 'Source Serif 4', serif; font-size: 36px; font-weight: 300; color: var(--sa-navy); margin-bottom: 4px; line-height: 1; font-style: italic; }
+  .card h3 { font-size: 17px; font-weight: 700; color: var(--sa-navy); margin-bottom: 8px; letter-spacing: -0.2px; }
+  .card p { font-size: 14px; color: var(--sa-mute); line-height: 1.55; }
+
+  /* Customer chooser */
+  .examples-section { margin-top: 64px; padding-top: 48px; border-top: 1px solid var(--sa-line); }
+  .examples-section h2 { font-family: 'Source Serif 4', serif; font-size: 28px; font-weight: 400; color: var(--sa-navy); margin-bottom: 8px; letter-spacing: -0.01em; }
+  .examples-section p.lead { color: var(--sa-mute); font-size: 15px; margin-bottom: 24px; }
+  .case-card {
+    background: white;
+    border: 1px solid var(--sa-line);
+    border-radius: 8px;
+    padding: 24px;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .case-card:hover { border-color: var(--sa-teal); box-shadow: var(--shadow-lift); transform: translateY(-2px); }
+  .case-sector { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--sa-teal-deep); font-weight: 700; }
+  .case-card h4 { font-size: 17px; color: var(--sa-navy); font-weight: 700; line-height: 1.25; }
+  .case-card p { font-size: 13px; color: var(--sa-mute); line-height: 1.55; }
+  .case-stats { display: flex; gap: 12px; margin-top: 6px; }
+  .case-stat { background: var(--sa-cream); padding: 6px 10px; border-radius: 4px; font-size: 11px; color: var(--sa-navy); font-weight: 600; }
+
+  /* Assessment screen */
+  .assess-wrap { max-width: 880px; margin: 0 auto; }
+  .progress-bar { display: flex; gap: 6px; margin-bottom: 32px; }
+  .progress-seg {
+    flex: 1;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--sa-line);
+    transition: background 0.25s ease;
+  }
+  .progress-seg.done { background: var(--sa-teal); }
+  .progress-seg.current { background: var(--sa-navy); }
+
+  .dimension-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+  .dimension-badge.value { background: rgba(0,176,185,0.12); color: var(--sa-teal-deep); }
+  .dimension-badge.risk { background: rgba(15,45,82,0.08); color: var(--sa-navy); }
+  .dimension-badge.readiness { background: rgba(111,207,115,0.18); color: #2E7A3A; }
+  .dimension-badge::before {
+    content: ''; width: 8px; height: 8px; border-radius: 50%;
+  }
+  .dimension-badge.value::before { background: var(--sa-teal); }
+  .dimension-badge.risk::before { background: var(--sa-navy); }
+  .dimension-badge.readiness::before { background: var(--sa-green); }
+
+  .question-text {
+    font-family: 'Source Serif 4', serif;
+    font-size: 30px;
+    font-weight: 400;
+    line-height: 1.25;
+    color: var(--sa-navy);
+    margin-bottom: 12px;
+    letter-spacing: -0.01em;
+  }
+  .question-context { color: var(--sa-mute); font-size: 15px; line-height: 1.55; margin-bottom: 32px; max-width: 700px; }
+  .q-counter { font-size: 12px; color: var(--sa-mute); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 600; margin-bottom: 14px; }
+
+  .scale {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    margin-bottom: 36px;
+  }
+  .scale-option {
+    background: white;
+    border: 1.5px solid var(--sa-line);
+    border-radius: 8px;
+    padding: 18px 14px;
+    cursor: pointer;
+    transition: all 0.16s ease;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-height: 130px;
+  }
+  .scale-option:hover { border-color: var(--sa-teal); transform: translateY(-2px); box-shadow: var(--shadow-soft); }
+  .scale-option.selected {
+    border-color: var(--sa-navy);
+    background: var(--sa-navy);
+    color: white;
+  }
+  .scale-option .num {
+    font-family: 'Source Serif 4', serif;
+    font-size: 30px;
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1;
+  }
+  .scale-option.selected .num { color: var(--sa-teal); }
+  .scale-option .lbl { font-size: 12px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; }
+  .scale-option .desc { font-size: 11px; line-height: 1.45; opacity: 0.85; flex: 1; }
+
+  .nav-row { display: flex; justify-content: space-between; align-items: center; }
+  .skip-link { color: var(--sa-mute); font-size: 13px; cursor: pointer; text-decoration: underline; text-underline-offset: 4px; }
+  .skip-link:hover { color: var(--sa-navy); }
+
+  /* Results */
+  .results-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 40px; align-items: start; margin-bottom: 40px; }
+  .verdict-card { background: var(--sa-navy); color: white; border-radius: 10px; padding: 36px; position: relative; overflow: hidden; }
+  .verdict-card::after {
+    content: '';
+    position: absolute;
+    right: -40px; bottom: -40px;
+    width: 220px; height: 220px;
+    background: radial-gradient(circle, rgba(0,176,185,0.25) 0, transparent 65%);
+    pointer-events: none;
+  }
+  .verdict-eyebrow { color: var(--sa-teal); font-size: 11px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; margin-bottom: 14px; }
+  .verdict-card h2 { font-family: 'Source Serif 4', serif; font-size: 36px; font-weight: 400; line-height: 1.15; margin-bottom: 14px; letter-spacing: -0.01em; }
+  .verdict-card p { color: rgba(255,255,255,0.78); font-size: 15px; line-height: 1.55; margin-bottom: 22px; }
+  .verdict-recommendation {
+    background: rgba(255,255,255,0.08);
+    border-left: 3px solid var(--sa-teal);
+    padding: 14px 18px;
+    border-radius: 4px;
+    font-size: 14px;
+    line-height: 1.55;
+  }
+
+  .scores-list { display: flex; flex-direction: column; gap: 16px; }
+  .score-row {
+    background: white;
+    border: 1px solid var(--sa-line);
+    border-radius: 8px;
+    padding: 18px 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .score-row-left { flex: 1; }
+  .score-row-label { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 700; margin-bottom: 6px; }
+  .score-row.value .score-row-label { color: var(--sa-teal-deep); }
+  .score-row.risk .score-row-label { color: var(--sa-navy); }
+  .score-row.readiness .score-row-label { color: #2E7A3A; }
+  .score-row-meter { height: 6px; background: var(--sa-cream); border-radius: 3px; overflow: hidden; margin-top: 8px; }
+  .score-row-fill { height: 100%; border-radius: 3px; transition: width 0.6s cubic-bezier(.2,.8,.2,1); }
+  .score-row.value .score-row-fill { background: var(--sa-teal); }
+  .score-row.risk .score-row-fill { background: var(--sa-navy); }
+  .score-row.readiness .score-row-fill { background: var(--sa-green); }
+  .score-row-value { font-family: 'Source Serif 4', serif; font-size: 38px; font-weight: 300; font-style: italic; color: var(--sa-navy); line-height: 1; margin-left: 22px; }
+  .score-row-value small { font-size: 14px; color: var(--sa-mute); font-style: normal; font-family: 'Manrope', sans-serif; }
+
+  /* Matrix */
+  .matrix-section { background: white; border: 1px solid var(--sa-line); border-radius: 10px; padding: 32px; margin-bottom: 32px; }
+  .matrix-section h3 { font-family: 'Source Serif 4', serif; font-size: 22px; font-weight: 400; color: var(--sa-navy); margin-bottom: 6px; letter-spacing: -0.01em; }
+  .matrix-section .sub { color: var(--sa-mute); font-size: 13px; margin-bottom: 24px; }
+  .matrix-wrap {
+    position: relative;
+    height: 480px;
+    padding: 20px 30px 50px 80px;
+  }
+  .matrix-grid {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    border-left: 2px solid var(--sa-line);
+    border-bottom: 2px solid var(--sa-line);
+  }
+  .matrix-quadrant {
+    position: absolute;
+    width: 50%;
+    height: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 14px 18px;
+  }
+  .matrix-quadrant.tl { top: 0; left: 0; background: rgba(0,176,185,0.04); }
+  .matrix-quadrant.tr { top: 0; right: 0; background: rgba(0,176,185,0.10); }
+  .matrix-quadrant.bl { bottom: 0; left: 0; background: rgba(90,101,115,0.04); }
+  .matrix-quadrant.br { bottom: 0; right: 0; background: rgba(244,183,62,0.08); }
+  .matrix-quad-label { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--sa-mute); font-weight: 700; }
+  .matrix-quad-title { font-size: 14px; font-weight: 700; color: var(--sa-navy); margin-top: 4px; }
+  .matrix-quadrant.tr .matrix-quad-label { color: var(--sa-teal-deep); }
+
+  /* Y axis label using writing-mode for clean vertical text */
+  .matrix-ylabel {
+    position: absolute;
+    left: 15px;
+    top: 0;
+    bottom: 50px;
+    width: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    writing-mode: vertical-rl;
+    color: var(--sa-mute);
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 700;
+    pointer-events: none;
+  }
+  .matrix-xlabel {
+    position: absolute;
+    bottom: 16px;
+    left: 80px;
+    right: 30px;
+    text-align: center;
+    color: var(--sa-mute);
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 700;
+    pointer-events: none;
+  }
+
+  .matrix-point {
+    position: absolute;
+    border-radius: 50%;
+    background: var(--sa-navy);
+    color: white;
+    display: grid; place-items: center;
+    font-weight: 700;
+    font-size: 13px;
+    transform: translate(-50%, 50%);
+    box-shadow: 0 4px 16px rgba(15,45,82,0.35);
+    border: 3px solid white;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    z-index: 2;
+  }
+  .matrix-point:hover { transform: translate(-50%, 50%) scale(1.08); }
+  .matrix-point-label {
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--sa-navy);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+    letter-spacing: 0.3px;
+    box-shadow: 0 4px 12px rgba(15,45,82,0.2);
+  }
+  .matrix-point-label::after {
+    content: ''; position: absolute;
+    top: 100%; left: 50%; transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: var(--sa-navy);
+  }
+
+  /* Result actions */
+  .actions-bar { display: flex; gap: 12px; flex-wrap: wrap; justify-content: flex-end; margin-bottom: 24px; }
+
+  /* Footer */
+  .footer-bar {
+    margin-top: 80px;
+    border-top: 1px solid var(--sa-line);
+    padding: 28px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: var(--sa-mute);
+    background: var(--sa-paper);
+  }
+  .footer-bar .badge-row { display: flex; gap: 16px; align-items: center; }
+
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; }
+    .hex-stack { display: none; }
+    .results-grid { grid-template-columns: 1fr; }
+    .scale { grid-template-columns: repeat(2, 1fr); }
+    h1 { font-size: 38px; }
+    .page { padding: 32px 24px 60px; }
+    .topbar { padding: 14px 20px; }
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useMemo, useRef, useEffect } = React;
+
+// ============================================================
+// QUESTIONS — 5 per dimension, 15 total
+// ============================================================
+const QUESTIONS = {
+  value: [
+    {
+      id: 'v1',
+      text: 'How many people will benefit from this on a daily basis?',
+      context: 'Think about who is directly affected — staff time saved, decisions improved, customers better served.',
+      scale: [
+        { v: 1, label: 'Fewer than 5', desc: 'A small team or single user' },
+        { v: 2, label: 'Up to 25', desc: 'One function or department' },
+        { v: 3, label: 'Up to 100', desc: 'Multiple teams across one business unit' },
+        { v: 4, label: 'Hundreds', desc: 'A whole directorate or division' },
+        { v: 5, label: 'Thousands', desc: 'Organisation-wide or citizen-facing' },
+      ],
+    },
+    {
+      id: 'v2',
+      text: 'What kind of time saving could realistically be achieved?',
+      context: 'Per user, per week, on the activities this use case is designed to improve.',
+      scale: [
+        { v: 1, label: 'Under 1 hour', desc: 'Marginal — nice to have' },
+        { v: 2, label: '1–3 hours', desc: 'Worthwhile productivity gain' },
+        { v: 3, label: '4–10 hours', desc: 'Meaningful capacity reclaimed' },
+        { v: 4, label: '10–20 hours', desc: 'Significant — reshapes roles' },
+        { v: 5, label: '20+ hours', desc: 'Transformational — frees senior capacity' },
+      ],
+    },
+    {
+      id: 'v3',
+      text: 'What is the wider business or mission impact?',
+      context: 'Beyond efficiency — does this improve outcomes for citizens, customers, patients or the organisation\'s purpose?',
+      scale: [
+        { v: 1, label: 'Internal only', desc: 'Convenience for staff' },
+        { v: 2, label: 'Modest', desc: 'Quality or experience improves slightly' },
+        { v: 3, label: 'Notable', desc: 'Measurable improvement in outcomes' },
+        { v: 4, label: 'Strategic', desc: 'Directly enables a strategic priority' },
+        { v: 5, label: 'Mission-defining', desc: 'Changes what the organisation can do' },
+      ],
+    },
+    {
+      id: 'v4',
+      text: 'What is the financial impact — savings, avoided cost or new revenue?',
+      context: 'Annualised. Estimate generously but defensibly.',
+      scale: [
+        { v: 1, label: 'Under £25k', desc: 'Localised efficiency' },
+        { v: 2, label: '£25k – £100k', desc: 'A clear case for one team' },
+        { v: 3, label: '£100k – £500k', desc: 'A clear case across multiple teams' },
+        { v: 4, label: '£500k – £2m', desc: 'Material to the operating budget' },
+        { v: 5, label: '£2m+', desc: 'Board-level commercial impact' },
+      ],
+    },
+    {
+      id: 'v5',
+      text: 'How visible is this use case to leadership and external stakeholders?',
+      context: 'A use case with a great story attached generates pull — and protects the wider AI programme.',
+      scale: [
+        { v: 1, label: 'Invisible', desc: 'A back-office quick win' },
+        { v: 2, label: 'Local visibility', desc: 'Known to one leader' },
+        { v: 3, label: 'Functional showcase', desc: 'Cited within the division' },
+        { v: 4, label: 'Board-level story', desc: 'Will land at SLT and externally' },
+        { v: 5, label: 'Lighthouse case study', desc: 'Conference, press, sector-defining' },
+      ],
+    },
+  ],
+  risk: [
+    {
+      id: 'r1',
+      text: 'What kind of data does this use case touch?',
+      context: 'Both at training/grounding time and in everyday use.',
+      scale: [
+        { v: 1, label: 'Non-sensitive', desc: 'Public or low-classification data only' },
+        { v: 2, label: 'Internal only', desc: 'Operational data, no PII' },
+        { v: 3, label: 'Limited PII', desc: 'Pseudonymised or low-risk personal data' },
+        { v: 4, label: 'Sensitive PII', desc: 'Identifiable, health, financial or special category' },
+        { v: 5, label: 'Highly sensitive', desc: 'Children, victims, suspects, clinical, regulated' },
+      ],
+    },
+    {
+      id: 'r2',
+      text: 'How autonomous is the AI in making decisions or taking actions?',
+      context: 'The further along this scale, the higher the responsible-AI bar.',
+      scale: [
+        { v: 1, label: 'Information only', desc: 'Surfaces facts, no recommendation' },
+        { v: 2, label: 'Suggests', desc: 'Recommends, human chooses' },
+        { v: 3, label: 'Drafts', desc: 'Produces output for human review' },
+        { v: 4, label: 'Acts with review', desc: 'Takes action, human can override' },
+        { v: 5, label: 'Acts autonomously', desc: 'No human in the loop by default' },
+      ],
+    },
+    {
+      id: 'r3',
+      text: 'How regulated is the process this AI is supporting?',
+      context: 'Consider GDPR, ICO guidance, sector regulators (FCA, ICO, NCSC, College of Policing), and statutory duties.',
+      scale: [
+        { v: 1, label: 'Unregulated', desc: 'Internal tooling only' },
+        { v: 2, label: 'Light touch', desc: 'General data protection applies' },
+        { v: 3, label: 'Audit trail required', desc: 'Decisions must be evidenced' },
+        { v: 4, label: 'Regulator-facing', desc: 'Outputs go to or affect a regulator' },
+        { v: 5, label: 'High-stakes regulated', desc: 'Criminal, clinical, financial or safeguarding' },
+      ],
+    },
+    {
+      id: 'r4',
+      text: 'What is the impact if the AI gets it wrong?',
+      context: 'Imagine the worst-plausible failure mode and its consequences.',
+      scale: [
+        { v: 1, label: 'Trivial', desc: 'Inconvenience, easily corrected' },
+        { v: 2, label: 'Minor', desc: 'Rework required, no external impact' },
+        { v: 3, label: 'Moderate', desc: 'Customer impact, reputational risk' },
+        { v: 4, label: 'Serious', desc: 'Financial loss, complaint, regulatory interest' },
+        { v: 5, label: 'Severe', desc: 'Safeguarding, clinical, legal or front-page' },
+      ],
+    },
+    {
+      id: 'r5',
+      text: 'How will the workforce react to this AI being introduced?',
+      context: 'Adoption risk is real risk. Resistance kills projects more often than technology does.',
+      scale: [
+        { v: 1, label: 'Enthusiasm', desc: 'Removes a pain point staff already complain about' },
+        { v: 2, label: 'Receptive', desc: 'Easy to demonstrate value' },
+        { v: 3, label: 'Mixed', desc: 'Workflow change, needs change management' },
+        { v: 4, label: 'Concerned', desc: 'Job-design implications, union interest' },
+        { v: 5, label: 'Resistant', desc: 'Perceived as replacing roles' },
+      ],
+    },
+  ],
+  readiness: [
+    {
+      id: 'd1',
+      text: 'How accessible and clean is the data this use case depends on?',
+      context: 'Including documents, case notes and unstructured content — not just databases.',
+      scale: [
+        { v: 1, label: 'Locked or unknown', desc: 'No clear owner, no access path' },
+        { v: 2, label: 'Scattered', desc: 'Multiple silos, poor quality, manual extracts' },
+        { v: 3, label: 'Identified', desc: 'Sources known, access agreed, work required' },
+        { v: 4, label: 'Mostly ready', desc: 'Pipelines exist, modest cleaning needed' },
+        { v: 5, label: 'Production-ready', desc: 'Governed, in Fabric / Databricks / Azure already' },
+      ],
+    },
+    {
+      id: 'd2',
+      text: 'What is the current state of the underlying technology platform?',
+      context: 'Azure footprint, Fabric or Databricks, Power BI, Copilot licensing.',
+      scale: [
+        { v: 1, label: 'Not in place', desc: 'No Azure or modern data platform' },
+        { v: 2, label: 'Early stage', desc: 'Azure tenancy exists, little built' },
+        { v: 3, label: 'Foundational', desc: 'Modern data platform in flight' },
+        { v: 4, label: 'Mature', desc: 'Fabric / Databricks live, Power BI adopted' },
+        { v: 5, label: 'Optimised', desc: 'Azure + Fabric / Databricks + Copilot in production' },
+      ],
+    },
+    {
+      id: 'd3',
+      text: 'Is there an executive sponsor with budget authority who is genuinely behind this?',
+      context: 'Not "interested" — actively willing to spend political capital and money.',
+      scale: [
+        { v: 1, label: 'No named sponsor', desc: 'Idea has no owner' },
+        { v: 2, label: 'Sponsor curious', desc: 'Has heard of it, not committed' },
+        { v: 3, label: 'Sponsor supportive', desc: 'Will champion if business case is sound' },
+        { v: 4, label: 'Sponsor committed', desc: 'Budget identified, on this year\'s plan' },
+        { v: 5, label: 'Sponsor accountable', desc: 'KPI on their objectives' },
+      ],
+    },
+    {
+      id: 'd4',
+      text: 'How mature is the organisation\'s AI governance and responsible-AI posture?',
+      context: 'Policies, ethics review, DPIA process, model lifecycle, named owner.',
+      scale: [
+        { v: 1, label: 'None', desc: 'No policy, no review, no owner' },
+        { v: 2, label: 'Ad hoc', desc: 'Some interest, no framework' },
+        { v: 3, label: 'Emerging', desc: 'Draft policy, DPIA process exists' },
+        { v: 4, label: 'Operational', desc: 'Ethics review board, model register, audit trail' },
+        { v: 5, label: 'Best in sector', desc: 'Published framework, transparency record, externally recognised' },
+      ],
+    },
+    {
+      id: 'd5',
+      text: 'How quickly could the organisation realistically start delivery?',
+      context: 'Procurement, mobilisation, internal resource — not just appetite.',
+      scale: [
+        { v: 1, label: 'Beyond 12 months', desc: 'Significant blockers remain' },
+        { v: 2, label: '6–12 months', desc: 'Procurement, foundations, then build' },
+        { v: 3, label: '3–6 months', desc: 'Framework route available, light foundations' },
+        { v: 4, label: '1–3 months', desc: 'Existing framework, sponsor ready' },
+        { v: 5, label: 'This quarter', desc: 'Discovery in flight, PoV scoped' },
+      ],
+    },
+  ],
+};
+
+const FLAT_QUESTIONS = [
+  ...QUESTIONS.value.map(q => ({ ...q, dimension: 'value' })),
+  ...QUESTIONS.risk.map(q => ({ ...q, dimension: 'risk' })),
+  ...QUESTIONS.readiness.map(q => ({ ...q, dimension: 'readiness' })),
+];
+
+// ============================================================
+// PRE-LOADED CASE STUDY: NORTH YORKSHIRE COUNCIL
+// Numbers grounded in the actual customer story published on Simpson Associates' site
+// ============================================================
+const PRELOADED = {
+  northYorkshire: {
+    customer: 'North Yorkshire Council',
+    sector: 'Local Authorities and Councils',
+    useCase: 'AI-powered insight engine for Children\'s Social Care',
+    summary: 'Reimagining children\'s social care by surfacing key information — including handwritten notes, PDFs and case files — to free social workers from screen time and return that time to children, young people and their families.',
+    scores: {
+      v1: 4, v2: 5, v3: 5, v4: 4, v5: 5,
+      r1: 5, r2: 2, r3: 5, r4: 5, r5: 1,
+      d1: 3, d2: 3, d3: 5, d4: 4, d5: 4,
+    },
+    headlines: [
+      { stat: '94%', label: 'Cost saving on key information-retrieval tasks' },
+      { stat: '20s', label: 'Down from 180–200 seconds to find a safety plan' },
+      { stat: '80%', label: 'Of social workers\' time historically spent at their computer' },
+    ],
+  },
+};
+
+// Hex SVG path (flat-top)
+const HEX_PATH = "M50,0 L100,28.87 L100,86.6 L50,115.47 L0,86.6 L0,28.87 Z";
+
+// ============================================================
+// LOGO / WORDMARK
+// ============================================================
+const Logo = ({ small }) => (
+  <div className="brand">
+    <div className="brand-mark">
+      <svg viewBox="0 0 100 115" preserveAspectRatio="xMidYMid meet">
+        <path d={HEX_PATH} fill="#00B0B9" />
+        <text x="50" y="72" textAnchor="middle" fill="white" fontFamily="Manrope" fontWeight="800" fontSize="48">S</text>
+      </svg>
+    </div>
+    {!small && (
+      <div className="brand-text">
+        <div className="sa">Simpson Associates</div>
+        <div className="sub">Data Transformation</div>
+      </div>
+    )}
+  </div>
+);
+
+// ============================================================
+// LANDING PAGE
+// ============================================================
+function Landing({ onStartBlank, onLoadCase }) {
+  return (
+    <div className="page">
+      <div className="hero">
+        <div>
+          <div className="eyebrow">AI Use Case Prioritiser</div>
+          <h1>From AI ambition to <em>a plan you can actually deliver.</em></h1>
+          <p className="lede">
+            A simple, sector-aware way to score AI use cases on what matters to a purpose-led organisation:
+            the value they create, the risk they carry, and whether you're ready to deliver them.
+          </p>
+          <div className="cta-row">
+            <button className="btn btn-primary" onClick={onStartBlank}>Start a new assessment →</button>
+            <button className="btn btn-ghost" onClick={() => onLoadCase('northYorkshire')}>or load a worked example</button>
+          </div>
+        </div>
+
+        <div className="hex-stack" aria-hidden="true">
+          <div className="hex value">
+            <svg viewBox="0 0 100 115" preserveAspectRatio="xMidYMid meet"><path d={HEX_PATH} /></svg>
+            <span>Value</span>
+          </div>
+          <div className="hex risk">
+            <svg viewBox="0 0 100 115" preserveAspectRatio="xMidYMid meet"><path d={HEX_PATH} /></svg>
+            <span>Risk</span>
+          </div>
+          <div className="hex readiness">
+            <svg viewBox="0 0 100 115" preserveAspectRatio="xMidYMid meet"><path d={HEX_PATH} /></svg>
+            <span>Readiness</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="three-up">
+        <div className="card value">
+          <div className="stripe"></div>
+          <div className="card-num">01</div>
+          <h3>Value</h3>
+          <p>How much real impact will this create — for staff, citizens, and the mission? Scored across reach, time, outcomes, finance and visibility.</p>
+        </div>
+        <div className="card risk">
+          <div className="stripe"></div>
+          <div className="card-num">02</div>
+          <h3>Risk</h3>
+          <p>What could go wrong? Data sensitivity, autonomy, regulation, failure impact, and workforce reception — the responsible-AI lens.</p>
+        </div>
+        <div className="card readiness">
+          <div className="stripe"></div>
+          <div className="card-num">03</div>
+          <h3>Readiness</h3>
+          <p>Can you actually do it? Data accessibility, platform maturity, executive sponsorship, AI governance and realistic time-to-start.</p>
+        </div>
+      </div>
+
+      <div className="examples-section">
+        <h2>Or open a worked Simpson Associates example</h2>
+        <p className="lead">Use a pre-loaded case to see the framework in action with a real Simpson customer.</p>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 18, maxWidth: 720 }}>
+          <div className="case-card" onClick={() => onLoadCase('northYorkshire')}>
+            <div className="case-sector">Local Authorities · Children's Social Care</div>
+            <h4>North Yorkshire Council — AI insight engine for Social Workers</h4>
+            <p>Powered by Azure AI services. Surfaces structured and unstructured information — including handwritten notes — so social workers spend less time at a screen and more time with families.</p>
+            <div className="case-stats">
+              <span className="case-stat">94% cost saving</span>
+              <span className="case-stat">180s → 20s</span>
+              <span className="case-stat">Microsoft Partner of the Year 2024</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// ASSESSMENT FLOW
+// ============================================================
+function Assessment({ scores, setScores, onComplete, customerName, setCustomerName, useCaseName, setUseCaseName }) {
+  const [idx, setIdx] = useState(0);
+  const [stage, setStage] = useState(customerName ? 'questions' : 'meta'); // 'meta' or 'questions'
+
+  const total = FLAT_QUESTIONS.length;
+  const q = FLAT_QUESTIONS[idx];
+  const currentScore = q ? scores[q.id] : null;
+
+  const select = (v) => {
+    setScores(s => ({ ...s, [q.id]: v }));
+    setTimeout(() => {
+      if (idx < total - 1) setIdx(idx + 1);
+      else onComplete();
+    }, 220);
+  };
+
+  const back = () => setIdx(Math.max(0, idx - 1));
+  const skip = () => {
+    if (idx < total - 1) setIdx(idx + 1);
+    else onComplete();
+  };
+
+  if (stage === 'meta') {
+    return (
+      <div className="page">
+        <div className="assess-wrap">
+          <div className="dimension-badge value" style={{ background: 'rgba(15,45,82,0.08)', color: 'var(--sa-navy)' }}>
+            Step 1 of 2 · Set up
+          </div>
+          <h2 className="question-text" style={{ fontSize: 36 }}>Who is this assessment for?</h2>
+          <p className="question-context">A quick label so the output is meaningful when you export it.</p>
+
+          <div style={{ display: 'grid', gap: 20, marginBottom: 32 }}>
+            <label style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: 1.2, textTransform: 'uppercase', color: 'var(--sa-mute)' }}>Customer / Organisation</span>
+              <input
+                type="text"
+                placeholder="e.g. North Yorkshire Council"
+                value={customerName}
+                onChange={(e) => setCustomerName(e.target.value)}
+                style={{
+                  border: '1.5px solid var(--sa-line)',
+                  borderRadius: 6,
+                  padding: '14px 16px',
+                  fontSize: 16,
+                  fontFamily: 'inherit',
+                  background: 'white',
+                }}
+              />
+            </label>
+
+            <label style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: 1.2, textTransform: 'uppercase', color: 'var(--sa-mute)' }}>Use Case</span>
+              <input
+                type="text"
+                placeholder="e.g. AI-powered insight engine for case management"
+                value={useCaseName}
+                onChange={(e) => setUseCaseName(e.target.value)}
+                style={{
+                  border: '1.5px solid var(--sa-line)',
+                  borderRadius: 6,
+                  padding: '14px 16px',
+                  fontSize: 16,
+                  fontFamily: 'inherit',
+                  background: 'white',
+                }}
+              />
+            </label>
+          </div>
+
+          <button
+            className="btn btn-primary"
+            disabled={!customerName.trim() || !useCaseName.trim()}
+            onClick={() => setStage('questions')}
+          >Begin the 15 questions →</button>
+        </div>
+      </div>
+    );
+  }
+
+  // Progress segments — 3 dimensions, 5 each
+  const dimensionIdx = (i) => i < 5 ? 0 : i < 10 ? 1 : 2;
+
+  return (
+    <div className="page">
+      <div className="assess-wrap">
+        <div className="progress-bar">
+          {FLAT_QUESTIONS.map((_, i) => {
+            const cls = i < idx ? 'done' : i === idx ? 'current' : '';
+            return <div key={i} className={`progress-seg ${cls}`} />;
+          })}
+        </div>
+
+        <div className="q-counter">Question {idx + 1} of {total} · {customerName} — {useCaseName}</div>
+
+        <div className={`dimension-badge ${q.dimension}`}>
+          {q.dimension === 'value' && 'Value · how much will it create'}
+          {q.dimension === 'risk' && 'Risk · what could go wrong'}
+          {q.dimension === 'readiness' && 'Readiness · can we deliver it'}
+        </div>
+
+        <div className="question-text">{q.text}</div>
+        <p className="question-context">{q.context}</p>
+
+        <div className="scale">
+          {q.scale.map(opt => (
+            <button
+              key={opt.v}
+              className={`scale-option ${currentScore === opt.v ? 'selected' : ''}`}
+              onClick={() => select(opt.v)}
+            >
+              <span className="num">{opt.v}</span>
+              <span className="lbl">{opt.label}</span>
+              <span className="desc">{opt.desc}</span>
+            </button>
+          ))}
+        </div>
+
+        <div className="nav-row">
+          <button className="btn btn-secondary" onClick={back} disabled={idx === 0}>← Back</button>
+          <span className="skip-link" onClick={skip}>Skip this question →</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// RESULTS PAGE
+// ============================================================
+function avg(scores, ids) {
+  const vals = ids.map(id => scores[id]).filter(v => typeof v === 'number');
+  if (!vals.length) return 0;
+  return vals.reduce((a,b) => a+b, 0) / vals.length;
+}
+
+function getVerdict(value, risk, readiness) {
+  if (value >= 3.5 && risk <= 3 && readiness >= 3.5) {
+    return {
+      title: 'Lighthouse — start now.',
+      summary: 'High value, manageable risk, strong readiness. This is the use case to fund, sponsor and turn into a story.',
+      recommendation: 'Recommend a 6–8 week Proof of Value engagement. Embed responsible-AI guardrails from day one. Position as a sector lighthouse so the success unlocks the wider portfolio.',
+    };
+  }
+  if (value >= 3.5 && risk >= 3.5) {
+    return {
+      title: 'High reward, but eyes wide open.',
+      summary: 'Real value sits inside this use case — but so does material risk. Treat as strategic, not a quick win.',
+      recommendation: 'Begin with an AI Readiness Assessment and a focused Responsible AI design phase. Engage the Ethics & Risk Review Board early. Structure delivery in phased gates with human-in-the-loop by default.',
+    };
+  }
+  if (value >= 3.5 && readiness < 3) {
+    return {
+      title: 'Valuable, but not yet deliverable.',
+      summary: 'The prize is real, but the organisation isn\'t ready to capture it today.',
+      recommendation: 'Park as a target use case. Use this assessment to define the foundation work needed — data, platform, sponsorship, governance — and revisit in 3–6 months.',
+    };
+  }
+  if (value < 2.5 && risk < 2.5) {
+    return {
+      title: 'Quick win — useful, but not the headline.',
+      summary: 'Low-risk and easy to deliver. Worth doing for productivity, but unlikely to be the case study Simpson builds the year around.',
+      recommendation: 'Deliver as a packaged productivity engagement. Use it to demonstrate momentum while higher-value use cases mature.',
+    };
+  }
+  return {
+    title: 'Worth a closer conversation.',
+    summary: 'The numbers don\'t scream "go" or "park" — which usually means the next step is shaping, not scoring.',
+    recommendation: 'Run a focused half-day workshop with the use case sponsor to sharpen scope, sharpen the value hypothesis and decide whether to invest in a Proof of Value.',
+  };
+}
+
+function Results({ scores, customerName, useCaseName, onRestart, onExport, isPreloaded, preloadedHeadlines }) {
+  const valueScore = avg(scores, QUESTIONS.value.map(q => q.id));
+  const riskScore = avg(scores, QUESTIONS.risk.map(q => q.id));
+  const readinessScore = avg(scores, QUESTIONS.readiness.map(q => q.id));
+
+  const verdict = getVerdict(valueScore, riskScore, readinessScore);
+
+  // Matrix positioning: X = Value (1-5 left to right), Y = Risk (1-5 bottom to top, INVERTED since we want low risk at top)
+  // We invert risk so the TL = high value + low risk = the sweet spot
+  // X position: value / 5 * 100 (%)
+  // Y position from bottom: (5 - risk) / 5 * 100 (so risk=1 -> 80% up, risk=5 -> 0% up)
+  const xPct = (valueScore / 5) * 100;
+  const yPct = ((5 - riskScore) / 5) * 100;
+  const bubbleSize = 36 + (readinessScore / 5) * 36; // 36 - 72px
+
+  return (
+    <div className="page">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 32, gap: 20, flexWrap: 'wrap' }}>
+        <div style={{ flex: '1 1 400px' }}>
+          <div className="eyebrow">Assessment Result · {customerName}</div>
+          <h1 style={{ fontSize: 40, marginBottom: 0, lineHeight: 1.1 }}>{useCaseName}</h1>
+        </div>
+        <div style={{ display: 'flex', gap: 10 }}>
+          <button className="btn btn-secondary" onClick={onRestart}>↺ Start over</button>
+          <button className="btn btn-primary" onClick={onExport}>↓ Export to PowerPoint</button>
+        </div>
+      </div>
+
+      <div className="results-grid">
+        <div className="verdict-card">
+          <div className="verdict-eyebrow">The Verdict</div>
+          <h2>{verdict.title}</h2>
+          <p>{verdict.summary}</p>
+          <div className="verdict-recommendation">
+            <strong style={{ color: 'var(--sa-teal)', display: 'block', marginBottom: 6, fontSize: 11, letterSpacing: 1.5, textTransform: 'uppercase' }}>Recommended Next Step</strong>
+            {verdict.recommendation}
+          </div>
+        </div>
+
+        <div className="scores-list">
+          {[
+            { dim: 'value', label: 'Value', score: valueScore, max: 5 },
+            { dim: 'risk', label: 'Risk', score: riskScore, max: 5 },
+            { dim: 'readiness', label: 'Readiness', score: readinessScore, max: 5 },
+          ].map(s => (
+            <div key={s.dim} className={`score-row ${s.dim}`}>
+              <div className="score-row-left">
+                <div className="score-row-label">{s.label}</div>
+                <div className="score-row-meter">
+                  <div className="score-row-fill" style={{ width: `${(s.score/s.max)*100}%` }} />
+                </div>
+              </div>
+              <div className="score-row-value">{s.score.toFixed(1)}<small>/5</small></div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="matrix-section">
+        <h3>Value vs Risk — sized by Readiness</h3>
+        <p className="sub">Where on the prioritisation map does this use case land?</p>
+
+        <div className="matrix-wrap">
+          <span className="matrix-ylabel">Lower risk · ↓ · Higher risk</span>
+          <span className="matrix-xlabel">← Lower value · Higher value →</span>
+
+          <div className="matrix-grid">
+            <div className="matrix-quadrant tl">
+              <div className="matrix-quad-label">Top Left</div>
+              <div className="matrix-quad-title">Strategic but speculative</div>
+            </div>
+            <div className="matrix-quadrant tr">
+              <div className="matrix-quad-label">★ The sweet spot</div>
+              <div className="matrix-quad-title">Lighthouse use case</div>
+            </div>
+            <div className="matrix-quadrant bl">
+              <div className="matrix-quad-label">Bottom Left</div>
+              <div className="matrix-quad-title">Park or descope</div>
+            </div>
+            <div className="matrix-quadrant br">
+              <div className="matrix-quad-label">Bottom Right</div>
+              <div className="matrix-quad-title">High reward, eyes open</div>
+            </div>
+
+            <div
+              className="matrix-point"
+              style={{
+                left: `${Math.min(95, Math.max(5, xPct))}%`,
+                bottom: `${Math.min(95, Math.max(5, yPct))}%`,
+                width: bubbleSize,
+                height: bubbleSize,
+                fontSize: bubbleSize < 50 ? 11 : 13,
+              }}
+              title={`Value ${valueScore.toFixed(1)} · Risk ${riskScore.toFixed(1)} · Readiness ${readinessScore.toFixed(1)}`}
+            >
+              <div className="matrix-point-label">{customerName} · {readinessScore.toFixed(1)} ready</div>
+              {valueScore.toFixed(1)}
+            </div>
+          </div>
+        </div>
+
+        <p style={{ fontSize: 12, color: 'var(--sa-mute)', marginTop: 20, lineHeight: 1.55 }}>
+          <strong style={{ color: 'var(--sa-navy)' }}>Reading the chart:</strong>{' '}
+          Up-and-right is the sweet spot — high value, low risk. The bubble size shows how ready the organisation is to actually deliver this use case today (larger = more ready).
+        </p>
+      </div>
+
+      {isPreloaded && preloadedHeadlines && (
+        <div className="matrix-section" style={{ background: 'var(--sa-cream)', borderColor: 'var(--sa-line)' }}>
+          <h3>What actually happened</h3>
+          <p className="sub">The real-world outcomes from this Simpson Associates engagement.</p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20, marginTop: 14 }}>
+            {preloadedHeadlines.map((h, i) => (
+              <div key={i}>
+                <div style={{
+                  fontFamily: 'Source Serif 4, serif',
+                  fontSize: 48, fontWeight: 300, fontStyle: 'italic',
+                  color: 'var(--sa-navy)', lineHeight: 1, marginBottom: 8,
+                }}>{h.stat}</div>
+                <div style={{ fontSize: 13, color: 'var(--sa-mute)', lineHeight: 1.5 }}>{h.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ============================================================
+// PPTX EXPORT
+// ============================================================
+function exportPpt(scores, customerName, useCaseName, isPreloaded, preloadedHeadlines) {
+  const pptx = new PptxGenJS();
+  pptx.title = `${customerName} — AI Use Case Assessment`;
+  pptx.author = 'Simpson Associates';
+  pptx.layout = 'LAYOUT_WIDE'; // 13.3 x 7.5
+
+  const NAVY = '0F2D52';
+  const TEAL = '00B0B9';
+  const GREEN = '6FCF73';
+  const CREAM = 'F7F5EF';
+  const MUTE = '5A6573';
+  const PAPER = 'FAFAF7';
+  const INK = '0B1726';
+
+  const valueScore = avg(scores, QUESTIONS.value.map(q => q.id));
+  const riskScore = avg(scores, QUESTIONS.risk.map(q => q.id));
+  const readinessScore = avg(scores, QUESTIONS.readiness.map(q => q.id));
+  const verdict = getVerdict(valueScore, riskScore, readinessScore);
+
+  // ---------- SLIDE 1: COVER ----------
+  const s1 = pptx.addSlide();
+  s1.background = { color: NAVY };
+
+  // Hex motif
+  s1.addShape(pptx.ShapeType.hexagon, { x: 10.5, y: 0.4, w: 1.6, h: 1.8, fill: { color: TEAL }, line: { color: TEAL } });
+  s1.addText('S', { x: 10.5, y: 0.4, w: 1.6, h: 1.8, color: 'FFFFFF', fontFace: 'Calibri', fontSize: 64, bold: true, align: 'center', valign: 'middle' });
+
+  s1.addText('Simpson Associates · AI Use Case Prioritiser', { x: 0.6, y: 0.55, w: 8, h: 0.4, fontSize: 11, color: TEAL, fontFace: 'Calibri', bold: true, charSpacing: 3 });
+
+  s1.addText(customerName, { x: 0.6, y: 1.5, w: 11, h: 0.7, fontSize: 22, color: 'FFFFFF', fontFace: 'Calibri', bold: true, charSpacing: 1 });
+  s1.addText(useCaseName, { x: 0.6, y: 2.3, w: 11, h: 1.8, fontSize: 44, color: 'FFFFFF', fontFace: 'Georgia', italic: false });
+
+  // Three-up summary chips
+  const chipY = 5.6;
+  [
+    { label: 'VALUE', score: valueScore, colour: TEAL },
+    { label: 'RISK', score: riskScore, colour: 'FFFFFF' },
+    { label: 'READINESS', score: readinessScore, colour: GREEN },
+  ].forEach((c, i) => {
+    const x = 0.6 + i * 4;
+    s1.addShape(pptx.ShapeType.rect, { x, y: chipY, w: 3.6, h: 1.3, fill: { color: '081A33' }, line: { color: c.colour, width: 1 } });
+    s1.addText(c.label, { x: x + 0.2, y: chipY + 0.15, w: 3.3, h: 0.3, fontSize: 10, color: c.colour, fontFace: 'Calibri', bold: true, charSpacing: 3 });
+    s1.addText(`${c.score.toFixed(1)}`, { x: x + 0.2, y: chipY + 0.4, w: 3.3, h: 0.9, fontSize: 44, color: 'FFFFFF', fontFace: 'Georgia', italic: true });
+    s1.addText('/ 5', { x: x + 1.6, y: chipY + 0.7, w: 1, h: 0.5, fontSize: 14, color: MUTE, fontFace: 'Calibri' });
+  });
+
+  s1.addText('A simple way to score AI use cases on value, risk and readiness — built for purpose-led organisations.', { x: 0.6, y: 6.95, w: 11, h: 0.4, fontSize: 11, color: 'AAB4C2', fontFace: 'Calibri', italic: true });
+
+  // ---------- SLIDE 2: THE VERDICT ----------
+  const s2 = pptx.addSlide();
+  s2.background = { color: PAPER };
+
+  s2.addText('THE VERDICT', { x: 0.6, y: 0.5, w: 10, h: 0.35, fontSize: 11, color: TEAL, fontFace: 'Calibri', bold: true, charSpacing: 3 });
+  s2.addText(customerName + ' · ' + useCaseName, { x: 0.6, y: 0.85, w: 12, h: 0.35, fontSize: 13, color: MUTE, fontFace: 'Calibri' });
+
+  s2.addText(verdict.title, { x: 0.6, y: 1.4, w: 12, h: 1.2, fontSize: 38, color: NAVY, fontFace: 'Georgia' });
+  s2.addText(verdict.summary, { x: 0.6, y: 2.8, w: 12, h: 0.9, fontSize: 16, color: INK, fontFace: 'Calibri', italic: false });
+
+  // Recommendation block
+  s2.addShape(pptx.ShapeType.rect, { x: 0.6, y: 4.0, w: 12.1, h: 1.6, fill: { color: NAVY }, line: { color: NAVY } });
+  s2.addShape(pptx.ShapeType.rect, { x: 0.6, y: 4.0, w: 0.08, h: 1.6, fill: { color: TEAL }, line: { color: TEAL } });
+  s2.addText('RECOMMENDED NEXT STEP', { x: 0.85, y: 4.15, w: 8, h: 0.3, fontSize: 10, color: TEAL, fontFace: 'Calibri', bold: true, charSpacing: 3 });
+  s2.addText(verdict.recommendation, { x: 0.85, y: 4.5, w: 11.6, h: 1, fontSize: 14, color: 'FFFFFF', fontFace: 'Calibri', valign: 'top' });
+
+  // Footer
+  s2.addText('Simpson Associates · AI Use Case Prioritiser', { x: 0.6, y: 7.1, w: 8, h: 0.3, fontSize: 9, color: MUTE, fontFace: 'Calibri' });
+  s2.addText('Page 2 of 4', { x: 11, y: 7.1, w: 1.7, h: 0.3, fontSize: 9, color: MUTE, fontFace: 'Calibri', align: 'right' });
+
+  // ---------- SLIDE 3: SCORE BREAKDOWN ----------
+  const s3 = pptx.addSlide();
+  s3.background = { color: PAPER };
+
+  s3.addText('SCORE BREAKDOWN', { x: 0.6, y: 0.5, w: 10, h: 0.35, fontSize: 11, color: TEAL, fontFace: 'Calibri', bold: true, charSpacing: 3 });
+  s3.addText('Three dimensions, fifteen questions', { x: 0.6, y: 0.85, w: 12, h: 0.6, fontSize: 28, color: NAVY, fontFace: 'Georgia' });
+
+  // Three score cards
+  const cardY = 1.9;
+  const cardData = [
+    { label: 'VALUE', score: valueScore, colour: TEAL, blurb: 'Reach, time saved, outcomes, financial impact and visibility.' },
+    { label: 'RISK', score: riskScore, colour: NAVY, blurb: 'Data sensitivity, autonomy, regulation, failure impact and adoption.' },
+    { label: 'READINESS', score: readinessScore, colour: GREEN, blurb: 'Data, platform, sponsorship, governance and realistic time-to-start.' },
+  ];
+  cardData.forEach((c, i) => {
+    const x = 0.6 + i * 4.1;
+    s3.addShape(pptx.ShapeType.rect, { x, y: cardY, w: 3.85, h: 4.6, fill: { color: 'FFFFFF' }, line: { color: 'E3E1D8' } });
+    s3.addShape(pptx.ShapeType.rect, { x, y: cardY, w: 3.85, h: 0.08, fill: { color: c.colour }, line: { color: c.colour } });
+    s3.addText(c.label, { x: x + 0.3, y: cardY + 0.3, w: 3.3, h: 0.3, fontSize: 11, color: c.colour, fontFace: 'Calibri', bold: true, charSpacing: 3 });
+    s3.addText(`${c.score.toFixed(1)}`, { x: x + 0.3, y: cardY + 0.8, w: 3.3, h: 1.6, fontSize: 84, color: NAVY, fontFace: 'Georgia', italic: true });
+    s3.addText('/ 5', { x: x + 2.2, y: cardY + 1.65, w: 1.4, h: 0.5, fontSize: 18, color: MUTE, fontFace: 'Calibri' });
+
+    // Mini-bar
+    s3.addShape(pptx.ShapeType.rect, { x: x + 0.3, y: cardY + 2.6, w: 3.3, h: 0.18, fill: { color: CREAM }, line: { color: CREAM } });
+    s3.addShape(pptx.ShapeType.rect, { x: x + 0.3, y: cardY + 2.6, w: 3.3 * (c.score / 5), h: 0.18, fill: { color: c.colour }, line: { color: c.colour } });
+
+    s3.addText(c.blurb, { x: x + 0.3, y: cardY + 3.0, w: 3.3, h: 1.5, fontSize: 12, color: MUTE, fontFace: 'Calibri', valign: 'top' });
+  });
+
+  // Per-question detail
+  s3.addText('Detail by question (1 lowest — 5 highest):', { x: 0.6, y: 6.7, w: 12, h: 0.3, fontSize: 10, color: MUTE, fontFace: 'Calibri', italic: true });
+
+  // Footer
+  s3.addText('Simpson Associates · AI Use Case Prioritiser', { x: 0.6, y: 7.1, w: 8, h: 0.3, fontSize: 9, color: MUTE, fontFace: 'Calibri' });
+  s3.addText('Page 3 of 4', { x: 11, y: 7.1, w: 1.7, h: 0.3, fontSize: 9, color: MUTE, fontFace: 'Calibri', align: 'right' });
+
+  // ---------- SLIDE 4: MATRIX ----------
+  const s4 = pptx.addSlide();
+  s4.background = { color: PAPER };
+
+  s4.addText('VALUE vs RISK · sized by Readiness', { x: 0.6, y: 0.5, w: 10, h: 0.35, fontSize: 11, color: TEAL, fontFace: 'Calibri', bold: true, charSpacing: 3 });
+  s4.addText('Where does this use case land on the prioritisation map?', { x: 0.6, y: 0.85, w: 12, h: 0.6, fontSize: 26, color: NAVY, fontFace: 'Georgia' });
+
+  // Chart area
+  const cx = 1.4, cy = 2.0, cw = 7, ch = 4.6;
+
+  // Quadrants
+  s4.addShape(pptx.ShapeType.rect, { x: cx, y: cy, w: cw/2, h: ch/2, fill: { color: 'F0F7F8' }, line: { color: 'E3E1D8' } });
+  s4.addShape(pptx.ShapeType.rect, { x: cx + cw/2, y: cy, w: cw/2, h: ch/2, fill: { color: 'F5F1E5' }, line: { color: 'E3E1D8' } });
+  s4.addShape(pptx.ShapeType.rect, { x: cx, y: cy + ch/2, w: cw/2, h: ch/2, fill: { color: 'F0EFEC' }, line: { color: 'E3E1D8' } });
+  s4.addShape(pptx.ShapeType.rect, { x: cx + cw/2, y: cy + ch/2, w: cw/2, h: ch/2, fill: { color: 'F8EFEC' }, line: { color: 'E3E1D8' } });
+
+  // Quadrant labels
+  s4.addText('Strategic but\nspeculative', { x: cx + 0.15, y: cy + 0.15, w: cw/2 - 0.3, h: 0.6, fontSize: 10, color: MUTE, fontFace: 'Calibri', bold: true });
+  s4.addText('LIGHTHOUSE\nUSE CASE', { x: cx + cw/2 + 0.15, y: cy + 0.15, w: cw/2 - 0.3, h: 0.6, fontSize: 11, color: TEAL, fontFace: 'Calibri', bold: true, charSpacing: 1 });
+  s4.addText('Park or\ndescope', { x: cx + 0.15, y: cy + ch - 0.7, w: cw/2 - 0.3, h: 0.6, fontSize: 10, color: MUTE, fontFace: 'Calibri', bold: true });
+  s4.addText('High reward,\neyes open', { x: cx + cw/2 + 0.15, y: cy + ch - 0.7, w: cw/2 - 0.3, h: 0.6, fontSize: 10, color: MUTE, fontFace: 'Calibri', bold: true });
+
+  // Bubble position: x = value/5, y = (5-risk)/5 from TOP
+  const bx = cx + (valueScore / 5) * cw;
+  const by = cy + ((riskScore - 0) / 5) * ch; // risk from top — actually we want low risk near top
+  // Recalc: y from top = (risk/5) * ch, so high risk = bottom. Wait we want low risk at top.
+  // bottom = (5-risk)/5 means y from top = risk/5 * ch
+  const byCorrect = cy + (riskScore / 5) * ch;
+  const bubble = 0.4 + (readinessScore / 5) * 0.5; // 0.4 - 0.9 inches
+
+  s4.addShape(pptx.ShapeType.ellipse, {
+    x: bx - bubble/2,
+    y: byCorrect - bubble/2,
+    w: bubble,
+    h: bubble,
+    fill: { color: NAVY },
+    line: { color: 'FFFFFF', width: 3 },
+  });
+  s4.addText(valueScore.toFixed(1), {
+    x: bx - bubble/2,
+    y: byCorrect - bubble/2,
+    w: bubble,
+    h: bubble,
+    fontSize: bubble < 0.55 ? 10 : 13,
+    color: 'FFFFFF',
+    fontFace: 'Calibri',
+    bold: true,
+    align: 'center',
+    valign: 'middle',
+  });
+
+  // Axes labels — properly placed
+  s4.addText('← Lower value     ·     Higher value →', { x: cx, y: cy + ch + 0.1, w: cw, h: 0.3, fontSize: 10, color: MUTE, fontFace: 'Calibri', align: 'center', bold: true });
+
+  // Y-axis labels — separate items, properly placed
+  s4.addText('↑ Lower risk', { x: 0.3, y: cy + 0.2, w: 1.0, h: 0.4, fontSize: 9, color: MUTE, fontFace: 'Calibri', bold: true, align: 'left' });
+  s4.addText('↓ Higher risk', { x: 0.3, y: cy + ch - 0.5, w: 1.0, h: 0.4, fontSize: 9, color: MUTE, fontFace: 'Calibri', bold: true, align: 'left' });
+
+  // Side panel with the result
+  const px = 9.2;
+  s4.addShape(pptx.ShapeType.rect, { x: px, y: 2.0, w: 3.5, h: 4.6, fill: { color: 'FFFFFF' }, line: { color: 'E3E1D8' } });
+  s4.addShape(pptx.ShapeType.rect, { x: px, y: 2.0, w: 0.08, h: 4.6, fill: { color: TEAL }, line: { color: TEAL } });
+  s4.addText('THIS USE CASE', { x: px + 0.25, y: 2.2, w: 3.1, h: 0.3, fontSize: 10, color: TEAL, fontFace: 'Calibri', bold: true, charSpacing: 3 });
+  s4.addText(customerName, { x: px + 0.25, y: 2.55, w: 3.1, h: 0.45, fontSize: 15, color: NAVY, fontFace: 'Calibri', bold: true });
+  s4.addText(useCaseName, { x: px + 0.25, y: 3.05, w: 3.1, h: 1, fontSize: 12, color: INK, fontFace: 'Calibri', italic: true });
+
+  s4.addText(`Value: ${valueScore.toFixed(1)} / 5`, { x: px + 0.25, y: 4.4, w: 3.1, h: 0.35, fontSize: 13, color: NAVY, fontFace: 'Calibri', bold: true });
+  s4.addText(`Risk: ${riskScore.toFixed(1)} / 5`, { x: px + 0.25, y: 4.85, w: 3.1, h: 0.35, fontSize: 13, color: NAVY, fontFace: 'Calibri', bold: true });
+  s4.addText(`Readiness: ${readinessScore.toFixed(1)} / 5`, { x: px + 0.25, y: 5.3, w: 3.1, h: 0.35, fontSize: 13, color: NAVY, fontFace: 'Calibri', bold: true });
+
+  s4.addText('Up-and-right is the sweet spot. Larger bubble = readier to deliver.', { x: px + 0.25, y: 6.0, w: 3.1, h: 0.6, fontSize: 10, color: MUTE, fontFace: 'Calibri', italic: true });
+
+  // Footer
+  s4.addText('Simpson Associates · AI Use Case Prioritiser', { x: 0.6, y: 7.1, w: 8, h: 0.3, fontSize: 9, color: MUTE, fontFace: 'Calibri' });
+  s4.addText('Page 4 of 4', { x: 11, y: 7.1, w: 1.7, h: 0.3, fontSize: 9, color: MUTE, fontFace: 'Calibri', align: 'right' });
+
+  // Save
+  const safeName = customerName.replace(/[^a-z0-9]/gi, '_');
+  pptx.writeFile({ fileName: `${safeName}_AI_Use_Case_Assessment.pptx` });
+}
+
+// ============================================================
+// ROOT
+// ============================================================
+function App() {
+  const [stage, setStage] = useState('landing'); // landing | assess | results
+  const [scores, setScores] = useState({});
+  const [customerName, setCustomerName] = useState('');
+  const [useCaseName, setUseCaseName] = useState('');
+  const [isPreloaded, setIsPreloaded] = useState(false);
+  const [preloadedHeadlines, setPreloadedHeadlines] = useState(null);
+
+  const startBlank = () => {
+    setScores({});
+    setCustomerName('');
+    setUseCaseName('');
+    setIsPreloaded(false);
+    setPreloadedHeadlines(null);
+    setStage('assess');
+  };
+
+  const loadCase = (key) => {
+    const c = PRELOADED[key];
+    setScores(c.scores);
+    setCustomerName(c.customer);
+    setUseCaseName(c.useCase);
+    setIsPreloaded(true);
+    setPreloadedHeadlines(c.headlines);
+    setStage('results');
+  };
+
+  const restart = () => {
+    setStage('landing');
+    setScores({});
+    setCustomerName('');
+    setUseCaseName('');
+    setIsPreloaded(false);
+    setPreloadedHeadlines(null);
+  };
+
+  const handleExport = () => {
+    exportPpt(scores, customerName, useCaseName, isPreloaded, preloadedHeadlines);
+  };
+
+  return (
+    <div className="app">
+      <div className="topbar">
+        <Logo />
+        <div className="topbar-right">
+          <span className="pill">AI Use Case Prioritiser · Concept</span>
+        </div>
+      </div>
+
+      {stage === 'landing' && <Landing onStartBlank={startBlank} onLoadCase={loadCase} />}
+      {stage === 'assess' && (
+        <Assessment
+          scores={scores}
+          setScores={setScores}
+          onComplete={() => setStage('results')}
+          customerName={customerName}
+          setCustomerName={setCustomerName}
+          useCaseName={useCaseName}
+          setUseCaseName={setUseCaseName}
+        />
+      )}
+      {stage === 'results' && (
+        <Results
+          scores={scores}
+          customerName={customerName}
+          useCaseName={useCaseName}
+          onRestart={restart}
+          onExport={handleExport}
+          isPreloaded={isPreloaded}
+          preloadedHeadlines={preloadedHeadlines}
+        />
+      )}
+
+      <div className="footer-bar">
+        <div>© 2026 · A concept built for Simpson Associates by Luke Craven</div>
+        <div className="badge-row">
+          <span>Inspired by Zygens DDAD · Simplified for Presales</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
