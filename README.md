@@ -57,7 +57,6 @@ python3 -m http.server 8000
 ## Credits
 
 - Concept and build: **Luke Craven** ([Pathed Consulting](https://pathed-hub.netlify.app))
-- Framework inspiration: [Zygens DDAD](https://ddad.zygens.com/)
 - Built for the Presales AI Specialist conversation with Simpson Associates
 - Pre-loaded example data sourced from Simpson's [North Yorkshire Council case study](https://www.simpson-associates.co.uk/clients/north-yorkshire-council/)
 
