@@ -152,7 +152,7 @@
   .hex.readiness svg path { fill: var(--sa-green); }
 
   /* Cards row */
-  .three-up { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-top: 16px; }
+  .three-up { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: 16px; }
   .card {
     background: white;
     border: 1px solid var(--sa-line);
@@ -171,6 +171,7 @@
   .card.value .stripe { background: var(--sa-teal); }
   .card.risk .stripe { background: var(--sa-navy); }
   .card.readiness .stripe { background: var(--sa-green); }
+  .card.timeframe .stripe { background: var(--sa-amber); }
   .card-num { font-family: 'Source Serif 4', serif; font-size: 36px; font-weight: 300; color: var(--sa-navy); margin-bottom: 4px; line-height: 1; font-style: italic; }
   .card h3 { font-size: 17px; font-weight: 700; color: var(--sa-navy); margin-bottom: 8px; letter-spacing: -0.2px; }
   .card p { font-size: 14px; color: var(--sa-mute); line-height: 1.55; }
@@ -223,12 +224,14 @@
   .dimension-badge.value { background: rgba(0,176,185,0.12); color: var(--sa-teal-deep); }
   .dimension-badge.risk { background: rgba(15,45,82,0.08); color: var(--sa-navy); }
   .dimension-badge.readiness { background: rgba(111,207,115,0.18); color: #2E7A3A; }
+  .dimension-badge.timeframe { background: rgba(244,183,62,0.18); color: #8B6913; }
   .dimension-badge::before {
     content: ''; width: 8px; height: 8px; border-radius: 50%;
   }
   .dimension-badge.value::before { background: var(--sa-teal); }
   .dimension-badge.risk::before { background: var(--sa-navy); }
   .dimension-badge.readiness::before { background: var(--sa-green); }
+  .dimension-badge.timeframe::before { background: var(--sa-amber); }
 
   .question-text {
     font-family: 'Source Serif 4', serif;
@@ -327,11 +330,13 @@
   .score-row.value .score-row-label { color: var(--sa-teal-deep); }
   .score-row.risk .score-row-label { color: var(--sa-navy); }
   .score-row.readiness .score-row-label { color: #2E7A3A; }
+  .score-row.timeframe .score-row-label { color: #8B6913; }
   .score-row-meter { height: 6px; background: var(--sa-cream); border-radius: 3px; overflow: hidden; margin-top: 8px; }
   .score-row-fill { height: 100%; border-radius: 3px; transition: width 0.6s cubic-bezier(.2,.8,.2,1); }
   .score-row.value .score-row-fill { background: var(--sa-teal); }
   .score-row.risk .score-row-fill { background: var(--sa-navy); }
   .score-row.readiness .score-row-fill { background: var(--sa-green); }
+  .score-row.timeframe .score-row-fill { background: var(--sa-amber); }
   .score-row-value { font-family: 'Source Serif 4', serif; font-size: 38px; font-weight: 300; font-style: italic; color: var(--sa-navy); line-height: 1; margin-left: 22px; }
   .score-row-value small { font-size: 14px; color: var(--sa-mute); font-style: normal; font-family: 'Manrope', sans-serif; }
 
@@ -382,6 +387,7 @@
   .detail-panel.value .detail-score-pill { background: rgba(0,176,185,0.10); border-color: rgba(0,176,185,0.3); }
   .detail-panel.risk .detail-score-pill { background: rgba(15,45,82,0.08); border-color: rgba(15,45,82,0.2); }
   .detail-panel.readiness .detail-score-pill { background: rgba(111,207,115,0.18); border-color: rgba(111,207,115,0.4); }
+  .detail-panel.timeframe .detail-score-pill { background: rgba(244,183,62,0.18); border-color: rgba(244,183,62,0.4); }
   .detail-q-text {
     font-size: 14px;
     font-weight: 700;
@@ -415,6 +421,31 @@
   .matrix-section { background: white; border: 1px solid var(--sa-line); border-radius: 10px; padding: 32px; margin-bottom: 32px; }
   .matrix-section h3 { font-family: 'Source Serif 4', serif; font-size: 22px; font-weight: 400; color: var(--sa-navy); margin-bottom: 6px; letter-spacing: -0.01em; }
   .matrix-section .sub { color: var(--sa-mute); font-size: 13px; margin-bottom: 24px; }
+  .matrix-axis-picker {
+    display: flex; gap: 16px; flex-wrap: wrap;
+    margin: 0 0 24px;
+    padding: 14px 18px;
+    background: var(--sa-cream);
+    border-radius: 8px;
+    align-items: center;
+  }
+  .matrix-axis-picker .picker-group { display: flex; align-items: center; gap: 8px; }
+  .matrix-axis-picker label {
+    font-size: 11px; letter-spacing: 1.2px; text-transform: uppercase;
+    color: var(--sa-mute); font-weight: 700;
+  }
+  .matrix-axis-picker select {
+    border: 1px solid var(--sa-line);
+    background: white;
+    border-radius: 6px;
+    padding: 7px 10px;
+    font-family: inherit;
+    font-size: 13px;
+    color: var(--sa-navy);
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .matrix-axis-picker select:focus { outline: none; border-color: var(--sa-teal); }
   .matrix-wrap {
     position: relative;
     height: 480px;
@@ -576,15 +607,15 @@
   .ctx-block:first-of-type { border-top: 0; padding-top: 0; }
   .ctx-label { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--sa-mute); font-weight: 700; margin-bottom: 6px; }
   .ctx-value { font-size: 13px; color: var(--sa-ink); line-height: 1.4; font-weight: 600; }
-  .ctx-scores { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 6px; }
+  .ctx-scores { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 6px; margin-top: 6px; }
   .ctx-score {
     background: var(--sa-cream);
     border-radius: 6px;
-    padding: 10px 8px;
+    padding: 8px 4px;
     text-align: center;
   }
-  .ctx-score .lbl { font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--sa-mute); font-weight: 700; }
-  .ctx-score .num { font-family: 'Source Serif 4', serif; font-size: 22px; font-style: italic; color: var(--sa-navy); line-height: 1.2; }
+  .ctx-score .lbl { font-size: 8px; letter-spacing: 0.8px; text-transform: uppercase; color: var(--sa-mute); font-weight: 700; }
+  .ctx-score .num { font-family: 'Source Serif 4', serif; font-size: 18px; font-style: italic; color: var(--sa-navy); line-height: 1.2; }
   .ctx-knows {
     display: flex; flex-direction: column; gap: 6px;
     font-size: 12px;
@@ -882,7 +913,7 @@
 const { useState, useMemo, useRef, useEffect } = React;
 
 // ============================================================
-// QUESTIONS — 5 per dimension, 15 total
+// QUESTIONS — 5 per dimension, 20 total (Value, Risk, Readiness, Timeframe)
 // ============================================================
 const QUESTIONS = {
   value: [
@@ -1071,12 +1102,75 @@ const QUESTIONS = {
       ],
     },
   ],
+  timeframe: [
+    {
+      id: 't1',
+      text: 'What level of internal data and AI expertise can the team draw on?',
+      context: 'The more internal capability already in place, the faster a delivery can move and the less Simpson has to backfill.',
+      scale: [
+        { v: 1, label: 'Minimal', desc: 'No data engineers, no ML / AI experience in-house' },
+        { v: 2, label: 'Early', desc: 'BI analysts and Power BI users, no engineering depth' },
+        { v: 3, label: 'Capable', desc: 'Data engineering team, exposure to Azure / Fabric' },
+        { v: 4, label: 'Strong', desc: 'Mature data team, some ML or AI delivery experience' },
+        { v: 5, label: 'Specialist', desc: 'Dedicated AI / ML practice, MLOps in production' },
+      ],
+    },
+    {
+      id: 't2',
+      text: 'How much data engineering work is needed before this use case can begin?',
+      context: 'Data quality, pipelines, integration. The work between idea and the first useful agent prompt.',
+      scale: [
+        { v: 1, label: 'Substantial rebuild', desc: 'Sources fragmented, quality poor, no pipelines' },
+        { v: 2, label: 'Major lift', desc: 'New ingestion, modelling and cleansing all required' },
+        { v: 3, label: 'Moderate', desc: 'Sources known, pipelines need building or extending' },
+        { v: 4, label: 'Light', desc: 'OneLake / Lakehouse in place, modest gaps' },
+        { v: 5, label: 'Negligible', desc: 'Production-grade data already governed in Fabric' },
+      ],
+    },
+    {
+      id: 't3',
+      text: 'How complex is the integration with existing systems and security perimeters?',
+      context: 'Core banking, CRM, identity, network zones, on-prem legacy — each one adds weeks.',
+      scale: [
+        { v: 1, label: 'Very complex', desc: 'Multiple legacy systems, hardened network zones, on-prem' },
+        { v: 2, label: 'Complex', desc: 'Several integrations, security review required' },
+        { v: 3, label: 'Moderate', desc: 'Standard APIs, manageable security model' },
+        { v: 4, label: 'Light', desc: 'Modern APIs, Entra ID, agreed integration pattern' },
+        { v: 5, label: 'Minimal', desc: 'Data already in OneLake, integration not needed' },
+      ],
+    },
+    {
+      id: 't4',
+      text: 'How fast does this organisation make and unblock decisions?',
+      context: 'Procurement cadence, sign-off chains, sponsor availability — institutional speed.',
+      scale: [
+        { v: 1, label: 'Glacial', desc: 'Major procurement and committee cycle, 6+ months' },
+        { v: 2, label: 'Slow', desc: 'Formal procurement route, 3–6 months typical' },
+        { v: 3, label: 'Standard', desc: 'Established framework, ~2 months to mobilise' },
+        { v: 4, label: 'Quick', desc: 'Direct award route available, weeks not months' },
+        { v: 5, label: 'Decisive', desc: 'Sponsor empowered to commission, days to start' },
+      ],
+    },
+    {
+      id: 't5',
+      text: 'How significant are known dependencies and blockers?',
+      context: 'Things outside this team\'s control that could stall the work — programmes in flight, regulatory windows, vendor contracts.',
+      scale: [
+        { v: 1, label: 'Critical blockers', desc: 'Cannot start until other work completes' },
+        { v: 2, label: 'Significant', desc: 'Major dependencies on other programmes' },
+        { v: 3, label: 'Manageable', desc: 'A few known dependencies, plan around them' },
+        { v: 4, label: 'Minor', desc: 'Light dependencies, no real blockers' },
+        { v: 5, label: 'None', desc: 'Standalone, no external dependencies' },
+      ],
+    },
+  ],
 };
 
 const FLAT_QUESTIONS = [
   ...QUESTIONS.value.map(q => ({ ...q, dimension: 'value' })),
   ...QUESTIONS.risk.map(q => ({ ...q, dimension: 'risk' })),
   ...QUESTIONS.readiness.map(q => ({ ...q, dimension: 'readiness' })),
+  ...QUESTIONS.timeframe.map(q => ({ ...q, dimension: 'timeframe' })),
 ];
 
 // ============================================================
@@ -1093,6 +1187,7 @@ const PRELOADED = {
       v1: 4, v2: 5, v3: 5, v4: 4, v5: 5,
       r1: 5, r2: 2, r3: 5, r4: 5, r5: 1,
       d1: 3, d2: 3, d3: 5, d4: 4, d5: 4,
+      t1: 3, t2: 3, t3: 3, t4: 4, t5: 4,
     },
     rationale: {
       v1: 'Hundreds of social workers across North Yorkshire — the largest local authority in England by area — plus the children and families they serve are the ultimate beneficiaries.',
@@ -1112,11 +1207,67 @@ const PRELOADED = {
       d3: 'Strong executive sponsorship from Mel Hutchinson (Assistant Director, Children and Young People\'s Service) and Jonny Hoyle (Development Lead) — both quoted in the case study.',
       d4: 'NYC ran an AI Ethics Impact Assessment as part of the engagement — that posture is operational, not aspirational.',
       d5: 'A proof-of-concept was the right framing and was delivered as such — full production-grade governance would still need extending.',
+
+      t1: 'In-house BI and data engineering capability with Microsoft platform experience — capable team, but not a dedicated AI/ML practice. Simpson brought the AI delivery muscle.',
+      t2: 'Moderate. Case management data was reachable, but handwritten notes and PDFs needed unstructured-data pipelines built from scratch.',
+      t3: 'Integration with the case management system and the Azure tenancy was manageable — standard public sector patterns, no exotic legacy stack.',
+      t4: 'Council procurement was workable via existing framework routes — quicker than open procurement, but still measured in weeks not days.',
+      t5: 'Light dependencies. The programme was well-scoped, owned, and didn\'t depend on a wider transformation completing first.',
     },
     headlines: [
       { stat: '94%', label: 'Cost saving on key information-retrieval tasks' },
       { stat: '20s', label: 'Down from 180–200 seconds to find a safety plan' },
       { stat: '80%', label: 'Of social workers\' time historically spent at their computer' },
+    ],
+  },
+
+  // Imaginary worked example — Financial Services / Fraud Detection
+  // Used to demonstrate the agentic AI conversation on a richer commercial use case.
+  northgateBank: {
+    customer: 'Northgate Bank (imaginary)',
+    sector: 'Financial Services · Retail Banking',
+    useCase: 'Real-time fraud detection with agentic case triage',
+    summary: 'A mid-sized UK retail bank using Microsoft Fabric and agentic AI to detect card and online fraud in real time, drive down false positives, and let fraud analysts focus on the cases that actually matter.',
+    isImaginary: true,
+    scores: {
+      // Value — high. Big estate, real money, board-level visibility.
+      v1: 4, v2: 4, v3: 4, v4: 5, v5: 4,
+      // Risk — high. Sensitive financial data, regulated, autonomous decisions, workforce sensitivity.
+      r1: 4, r2: 4, r3: 5, r4: 4, r5: 3,
+      // Readiness — moderate. Azure footprint exists, modern data platform in flight, governance emerging.
+      d1: 3, d2: 3, d3: 4, d4: 3, d5: 3,
+      // Timeframe — slower than NYC. Bank-grade integration, procurement, dependencies on core platform.
+      t1: 3, t2: 2, t3: 2, t4: 2, t5: 3,
+    },
+    rationale: {
+      v1: 'A fraud ops team of ~40 analysts, plus indirect benefit to several million retail customers whose alerts and friction would reduce.',
+      v2: 'Industry benchmark: a fraud analyst spends 40–60% of their day on false positives. Reclaiming even half of that time is materially valuable.',
+      v3: 'Fraud loss reduction and customer-friction reduction both directly tie into the bank\'s strategic priorities. Notable but not "mission-defining" in the way a charity\'s purpose would be.',
+      v4: 'For a mid-sized UK bank, even a 20–30% reduction in fraud losses plus operational efficiency is comfortably in the £2m+ annual range.',
+      v5: 'Fraud detection is a popular FS conference story and a real Microsoft Partner narrative — strong external visibility, but well-trodden.',
+
+      r1: 'Card transactions, account events, customer PII, KYC data — financial special category data at scale.',
+      r2: 'The agent acts with review by design: it scores and triages, but blocks or refunds remain with a human analyst. Still a notable autonomy step up from "information only".',
+      r3: 'FCA-regulated firm, subject to operational resilience rules, financial crime obligations, and PRA scrutiny. High-stakes regulated.',
+      r4: 'Worst-plausible failure is a missed fraud event, a wrongly-blocked legitimate transaction, or a regulator-facing model bias issue. Serious, but not safeguarding-severe.',
+      r5: 'Fraud analysts may be initially cautious — the agent changes their workflow. Generally receptive once they see false-positive reduction in their queues.',
+
+      d1: 'Transaction data is well structured; reference data (customer 360, merchant master) needs work. Some sources still in legacy mainframe extracts.',
+      d2: 'Azure tenancy in place, Fabric trial capacity provisioned, modern data platform in flight but not yet production. Some Databricks on the data science side.',
+      d3: 'Director of Financial Crime is the sponsor with budget — committed, KPI-aligned, but needs CIO sign-off on platform spend.',
+      d4: 'Draft AI policy exists, DPIA process is mature for data, but model-lifecycle governance and AI-specific risk framework are still emerging.',
+      d5: 'Realistic start within 3–6 months given procurement and the platform foundations work needed.',
+
+      t1: 'Strong BI and data engineering team, growing data science capability, but agentic AI delivery is new territory — Simpson partnership would carry the AI muscle.',
+      t2: 'Major lift. Real-time streaming pipelines from card auth into Fabric Eventstream are new build, plus customer 360 enrichment from multiple sources.',
+      t3: 'Complex. Core banking, fraud platform, identity and FCA reporting all touch this. Bank-grade security review is non-trivial.',
+      t4: 'Slow by default. Formal procurement, IT governance and risk committee chain — 3–6 months to mobilise unless an existing framework route is used.',
+      t5: 'Manageable. A core banking migration is in flight but not on the critical path for this work; the fraud platform is independent enough to proceed.',
+    },
+    headlines: [
+      { stat: '£2m+', label: 'Estimated annual fraud loss reduction at target performance' },
+      { stat: '25–30%', label: 'False positive reduction (industry-proven Fabric pattern)' },
+      { stat: 'Hours → seconds', label: 'Detection latency, transaction stream to triage' },
     ],
   },
 };
@@ -1156,11 +1307,11 @@ function Landing({ onStartBlank, onLoadCase }) {
           <h1>From AI ambition to <em>a plan you can actually deliver.</em></h1>
           <p className="lede">
             A simple, sector-aware way to score AI use cases on what matters to a purpose-led organisation:
-            the value they create, the risk they carry, and whether you're ready to deliver them.
+            the value they create, the risk they carry, the readiness to deliver them, and how long it will take.
           </p>
           <div className="cta-row">
             <button className="btn btn-primary" onClick={onStartBlank}>Start a new assessment →</button>
-            <button className="btn btn-ghost" onClick={() => onLoadCase('northYorkshire')}>or load a worked example</button>
+            <button className="btn btn-ghost" onClick={() => onLoadCase('northYorkshire')}>or load a worked example ↓</button>
           </div>
         </div>
 
@@ -1199,20 +1350,36 @@ function Landing({ onStartBlank, onLoadCase }) {
           <h3>Readiness</h3>
           <p>Can you actually do it? Data accessibility, platform maturity, executive sponsorship, AI governance and realistic time-to-start.</p>
         </div>
+        <div className="card timeframe">
+          <div className="stripe"></div>
+          <div className="card-num">04</div>
+          <h3>Timeframe</h3>
+          <p>How long will it take? Internal expertise, data engineering effort, integration complexity, decision speed, and known blockers.</p>
+        </div>
       </div>
 
       <div className="examples-section">
-        <h2>Or open a worked Simpson Associates example</h2>
-        <p className="lead">Use a pre-loaded case to see the framework in action with a real Simpson customer.</p>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 18, maxWidth: 720 }}>
+        <h2>Or open a worked example</h2>
+        <p className="lead">Two pre-loaded cases — one a real published Simpson customer story, one an imaginary bank to demonstrate the framework on a commercial use case.</p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: 18 }}>
           <div className="case-card" onClick={() => onLoadCase('northYorkshire')}>
             <div className="case-sector">Local Authorities · Children's Social Care</div>
             <h4>North Yorkshire Council — AI insight engine for Social Workers</h4>
-            <p>Powered by Azure AI services. Surfaces structured and unstructured information — including handwritten notes — so social workers spend less time at a screen and more time with families.</p>
+            <p>A real published Simpson story. Powered by Azure AI services. Surfaces structured and unstructured information — including handwritten notes — so social workers spend less time at a screen and more time with families.</p>
             <div className="case-stats">
               <span className="case-stat">94% cost saving</span>
               <span className="case-stat">180s → 20s</span>
-              <span className="case-stat">Microsoft Partner of the Year 2024</span>
+              <span className="case-stat">Partner of the Year 2024</span>
+            </div>
+          </div>
+          <div className="case-card" onClick={() => onLoadCase('northgateBank')}>
+            <div className="case-sector">Financial Services · Retail Banking <em style={{ fontStyle: 'normal', color: 'var(--sa-mute)', fontWeight: 400, letterSpacing: 0.5 }}>· imaginary</em></div>
+            <h4>Northgate Bank — Real-time fraud detection with agentic case triage</h4>
+            <p>An imaginary mid-sized UK retail bank using Microsoft Fabric and agentic AI to detect card and online fraud in real time, cut false positives, and let fraud analysts focus on the cases that actually matter.</p>
+            <div className="case-stats">
+              <span className="case-stat">£2m+ loss reduction</span>
+              <span className="case-stat">25–30% fewer false positives</span>
+              <span className="case-stat">Hours → seconds</span>
             </div>
           </div>
         </div>
@@ -1303,14 +1470,14 @@ function Assessment({ scores, setScores, onComplete, onBack, customerName, setCu
             className="btn btn-primary"
             disabled={!customerName.trim() || !useCaseName.trim()}
             onClick={() => setStage('questions')}
-          >Begin the 15 questions →</button>
+          >Begin the 20 questions →</button>
         </div>
       </div>
     );
   }
 
-  // Progress segments — 3 dimensions, 5 each
-  const dimensionIdx = (i) => i < 5 ? 0 : i < 10 ? 1 : 2;
+  // Progress segments — 4 dimensions, 5 each
+  const dimensionIdx = (i) => i < 5 ? 0 : i < 10 ? 1 : i < 15 ? 2 : 3;
 
   return (
     <div className="page">
@@ -1333,6 +1500,7 @@ function Assessment({ scores, setScores, onComplete, onBack, customerName, setCu
           {q.dimension === 'value' && 'Value · how much will it create'}
           {q.dimension === 'risk' && 'Risk · what could go wrong'}
           {q.dimension === 'readiness' && 'Readiness · can we deliver it'}
+          {q.dimension === 'timeframe' && 'Timeframe · how long will it take'}
         </div>
 
         <div className="question-text">{q.text}</div>
@@ -1370,12 +1538,21 @@ function avg(scores, ids) {
   return vals.reduce((a,b) => a+b, 0) / vals.length;
 }
 
-function getVerdict(value, risk, readiness) {
-  if (value >= 3.5 && risk <= 3 && readiness >= 3.5) {
+function getVerdict(value, risk, readiness, timeframe) {
+  const tf = typeof timeframe === 'number' ? timeframe : 3; // default if not provided
+
+  if (value >= 3.5 && risk <= 3 && readiness >= 3.5 && tf >= 3.5) {
     return {
       title: 'Lighthouse — start now.',
-      summary: 'High value, manageable risk, strong readiness. This is the use case to fund, sponsor and turn into a story.',
+      summary: 'High value, manageable risk, strong readiness, and a realistic timeframe. This is the use case to fund, sponsor and turn into a story.',
       recommendation: 'Recommend a 6–8 week Proof of Value engagement. Embed responsible-AI guardrails from day one. Position as a sector lighthouse so the success unlocks the wider portfolio.',
+    };
+  }
+  if (value >= 3.5 && risk <= 3 && readiness >= 3.5 && tf < 3.5) {
+    return {
+      title: 'A lighthouse — but expect a longer runway.',
+      summary: 'The use case is genuinely strong, but the effort and time to deliver are material. Worth backing, but with eyes on the runway.',
+      recommendation: 'Run a 4-week shaping engagement to lock down architecture, integration and licensing before committing to a Proof of Value. Don\'t let the long runway erode the business case — sequence the work so value emerges in stages.',
     };
   }
   if (value >= 3.5 && risk >= 3.5) {
@@ -1407,18 +1584,38 @@ function getVerdict(value, risk, readiness) {
 }
 
 function Results({ scores, customerName, useCaseName, onRestart, onExport, onActivateAgent, isPreloaded, preloadedHeadlines, rationale }) {
-  const [expandedDim, setExpandedDim] = useState(null); // 'value' | 'risk' | 'readiness' | null
+  const [expandedDim, setExpandedDim] = useState(null); // 'value' | 'risk' | 'readiness' | 'timeframe' | null
+  const [xAxis, setXAxis] = useState('value');
+  const [yAxis, setYAxis] = useState('risk');
 
   const valueScore = avg(scores, QUESTIONS.value.map(q => q.id));
   const riskScore = avg(scores, QUESTIONS.risk.map(q => q.id));
   const readinessScore = avg(scores, QUESTIONS.readiness.map(q => q.id));
+  const timeframeScore = avg(scores, QUESTIONS.timeframe.map(q => q.id));
 
-  const verdict = getVerdict(valueScore, riskScore, readinessScore);
+  const verdict = getVerdict(valueScore, riskScore, readinessScore, timeframeScore);
 
-  // Matrix positioning: X = Value (1-5 left to right), Y = Risk (1-5 bottom to top, INVERTED since we want low risk at top)
-  const xPct = (valueScore / 5) * 100;
-  const yPct = ((5 - riskScore) / 5) * 100;
-  const bubbleSize = 36 + (readinessScore / 5) * 36; // 36 - 72px
+  const allScores = {
+    value: valueScore,
+    risk: riskScore,
+    readiness: readinessScore,
+    timeframe: timeframeScore,
+  };
+  const axisLabels = {
+    value: 'Value',
+    risk: 'Risk',
+    readiness: 'Readiness',
+    timeframe: 'Timeframe',
+  };
+  // Risk is "inverted" in matrix interpretation: high risk = lower position visually when on Y axis
+  const isInverted = (axis) => axis === 'risk';
+  const pctFor = (axis) => {
+    const s = allScores[axis];
+    return isInverted(axis) ? ((5 - s) / 5) * 100 : (s / 5) * 100;
+  };
+  const xPct = pctFor(xAxis);
+  const yPct = pctFor(yAxis);
+  const bubbleSize = 36 + (readinessScore / 5) * 36; // still sized by readiness for visual cue
 
   return (
     <div className="page">
@@ -1456,6 +1653,7 @@ function Results({ scores, customerName, useCaseName, onRestart, onExport, onAct
             { dim: 'value', label: 'Value', score: valueScore, max: 5, hint: 'Click to see how this score is built' },
             { dim: 'risk', label: 'Risk', score: riskScore, max: 5, hint: 'Click to see how this score is built' },
             { dim: 'readiness', label: 'Readiness', score: readinessScore, max: 5, hint: 'Click to see how this score is built' },
+            { dim: 'timeframe', label: 'Timeframe', score: timeframeScore, max: 5, hint: 'Click to see how this score is built' },
           ].map(s => (
             <div
               key={s.dim}
@@ -1482,12 +1680,14 @@ function Results({ scores, customerName, useCaseName, onRestart, onExport, onAct
           <h4>{
             expandedDim === 'value' ? 'How the Value score is built'
             : expandedDim === 'risk' ? 'How the Risk score is built'
-            : 'How the Readiness score is built'
+            : expandedDim === 'readiness' ? 'How the Readiness score is built'
+            : 'How the Timeframe score is built'
           }</h4>
           <p className="detail-sub">
             {expandedDim === 'value' && 'Five questions on reach, time, outcomes, financial impact and visibility.'}
             {expandedDim === 'risk' && 'Five questions on data sensitivity, autonomy, regulation, failure impact and workforce reception.'}
             {expandedDim === 'readiness' && 'Five questions on data, platform, sponsorship, governance and time-to-start.'}
+            {expandedDim === 'timeframe' && 'Five questions on internal expertise, data engineering effort, integration complexity, decision-making speed and known blockers.'}
           </p>
 
           {QUESTIONS[expandedDim].map(q => {
@@ -1517,51 +1717,84 @@ function Results({ scores, customerName, useCaseName, onRestart, onExport, onAct
       )}
 
       <div className="matrix-section">
-        <h3>Value vs Risk — sized by Readiness</h3>
-        <p className="sub">Where on the prioritisation map does this use case land?</p>
+        <h3>Prioritisation Matrix</h3>
+        <p className="sub">Pick any two of the four PRISM dimensions to plot the use case against. Bubble size still reflects Readiness.</p>
+
+        <div className="matrix-axis-picker">
+          <div className="picker-group">
+            <label>X axis</label>
+            <select value={xAxis} onChange={(e) => setXAxis(e.target.value)}>
+              <option value="value">Value</option>
+              <option value="risk">Risk</option>
+              <option value="readiness">Readiness</option>
+              <option value="timeframe">Timeframe</option>
+            </select>
+          </div>
+          <div className="picker-group">
+            <label>Y axis</label>
+            <select value={yAxis} onChange={(e) => setYAxis(e.target.value)}>
+              <option value="value">Value</option>
+              <option value="risk">Risk</option>
+              <option value="readiness">Readiness</option>
+              <option value="timeframe">Timeframe</option>
+            </select>
+          </div>
+          {xAxis === yAxis && (
+            <span style={{ fontSize: 12, color: 'var(--sa-coral)', fontWeight: 600 }}>
+              Pick two different dimensions for the plot to make sense.
+            </span>
+          )}
+        </div>
 
         <div className="matrix-wrap">
-          <span className="matrix-ylabel">Lower risk · ↓ · Higher risk</span>
-          <span className="matrix-xlabel">← Lower value · Higher value →</span>
+          <span className="matrix-ylabel">
+            {isInverted(yAxis)
+              ? `Lower ${axisLabels[yAxis].toLowerCase()} · ↑ · Higher ${axisLabels[yAxis].toLowerCase()}`
+              : `Higher ${axisLabels[yAxis].toLowerCase()} · ↑ · Lower ${axisLabels[yAxis].toLowerCase()}`}
+          </span>
+          <span className="matrix-xlabel">
+            {isInverted(xAxis)
+              ? `→ Lower ${axisLabels[xAxis].toLowerCase()} · Higher ${axisLabels[xAxis].toLowerCase()} ←`
+              : `← Lower ${axisLabels[xAxis].toLowerCase()} · Higher ${axisLabels[xAxis].toLowerCase()} →`}
+          </span>
 
           <div className="matrix-grid">
             <div className="matrix-quadrant tl">
-              <div className="matrix-quad-label">Top Left</div>
-              <div className="matrix-quad-title">Strategic but speculative</div>
+              <div className="matrix-quad-label">{axisLabels[yAxis]} high · {axisLabels[xAxis]} low</div>
             </div>
             <div className="matrix-quadrant tr">
               <div className="matrix-quad-label">★ The sweet spot</div>
-              <div className="matrix-quad-title">Lighthouse use case</div>
+              <div className="matrix-quad-title">{axisLabels[xAxis]} & {axisLabels[yAxis]} both favourable</div>
             </div>
             <div className="matrix-quadrant bl">
-              <div className="matrix-quad-label">Bottom Left</div>
-              <div className="matrix-quad-title">Park or descope</div>
+              <div className="matrix-quad-label">Both low — park</div>
             </div>
             <div className="matrix-quadrant br">
-              <div className="matrix-quad-label">Bottom Right</div>
-              <div className="matrix-quad-title">High reward, eyes open</div>
+              <div className="matrix-quad-label">{axisLabels[xAxis]} high · {axisLabels[yAxis]} low</div>
             </div>
 
-            <div
-              className="matrix-point"
-              style={{
-                left: `${Math.min(95, Math.max(5, xPct))}%`,
-                bottom: `${Math.min(95, Math.max(5, yPct))}%`,
-                width: bubbleSize,
-                height: bubbleSize,
-                fontSize: bubbleSize < 50 ? 11 : 13,
-              }}
-              title={`Value ${valueScore.toFixed(1)} · Risk ${riskScore.toFixed(1)} · Readiness ${readinessScore.toFixed(1)}`}
-            >
-              <div className="matrix-point-label">{customerName} · {readinessScore.toFixed(1)} ready</div>
-              {valueScore.toFixed(1)}
-            </div>
+            {xAxis !== yAxis && (
+              <div
+                className="matrix-point"
+                style={{
+                  left: `${Math.min(95, Math.max(5, xPct))}%`,
+                  bottom: `${Math.min(95, Math.max(5, yPct))}%`,
+                  width: bubbleSize,
+                  height: bubbleSize,
+                  fontSize: bubbleSize < 50 ? 11 : 13,
+                }}
+                title={`${axisLabels[xAxis]} ${allScores[xAxis].toFixed(1)} · ${axisLabels[yAxis]} ${allScores[yAxis].toFixed(1)} · Readiness ${readinessScore.toFixed(1)}`}
+              >
+                <div className="matrix-point-label">{customerName} · {readinessScore.toFixed(1)} ready</div>
+                {allScores[xAxis].toFixed(1)}
+              </div>
+            )}
           </div>
         </div>
 
         <p style={{ fontSize: 12, color: 'var(--sa-mute)', marginTop: 20, lineHeight: 1.55 }}>
           <strong style={{ color: 'var(--sa-navy)' }}>Reading the chart:</strong>{' '}
-          Up-and-right is the sweet spot — high value, low risk. The bubble size shows how ready the organisation is to actually deliver this use case today (larger = more ready).
+          The top-right quadrant is where you want use cases to land — the bubble size shows how ready the organisation is to deliver today (larger = more ready). Note that for Risk, lower is better, so the axis is inverted automatically.
         </p>
       </div>
 
@@ -1599,6 +1832,7 @@ function exportPpt(scores, customerName, useCaseName, isPreloaded, preloadedHead
   const NAVY = '0F2D52';
   const TEAL = '00B0B9';
   const GREEN = '6FCF73';
+  const AMBER = 'F4B73E';
   const CREAM = 'F7F5EF';
   const MUTE = '5A6573';
   const PAPER = 'FAFAF7';
@@ -1607,7 +1841,8 @@ function exportPpt(scores, customerName, useCaseName, isPreloaded, preloadedHead
   const valueScore = avg(scores, QUESTIONS.value.map(q => q.id));
   const riskScore = avg(scores, QUESTIONS.risk.map(q => q.id));
   const readinessScore = avg(scores, QUESTIONS.readiness.map(q => q.id));
-  const verdict = getVerdict(valueScore, riskScore, readinessScore);
+  const timeframeScore = avg(scores, QUESTIONS.timeframe.map(q => q.id));
+  const verdict = getVerdict(valueScore, riskScore, readinessScore, timeframeScore);
 
   // ---------- SLIDE 1: COVER ----------
   const s1 = pptx.addSlide();
@@ -1622,21 +1857,22 @@ function exportPpt(scores, customerName, useCaseName, isPreloaded, preloadedHead
   s1.addText(customerName, { x: 0.6, y: 1.5, w: 11, h: 0.7, fontSize: 22, color: 'FFFFFF', fontFace: 'Calibri', bold: true, charSpacing: 1 });
   s1.addText(useCaseName, { x: 0.6, y: 2.3, w: 11, h: 1.8, fontSize: 44, color: 'FFFFFF', fontFace: 'Georgia', italic: false });
 
-  // Three-up summary chips
+  // Four-up summary chips
   const chipY = 5.6;
   [
     { label: 'VALUE', score: valueScore, colour: TEAL },
     { label: 'RISK', score: riskScore, colour: 'FFFFFF' },
     { label: 'READINESS', score: readinessScore, colour: GREEN },
+    { label: 'TIMEFRAME', score: timeframeScore, colour: AMBER },
   ].forEach((c, i) => {
-    const x = 0.6 + i * 4;
-    s1.addShape(pptx.ShapeType.rect, { x, y: chipY, w: 3.6, h: 1.3, fill: { color: '081A33' }, line: { color: c.colour, width: 1 } });
-    s1.addText(c.label, { x: x + 0.2, y: chipY + 0.15, w: 3.3, h: 0.3, fontSize: 10, color: c.colour, fontFace: 'Calibri', bold: true, charSpacing: 3 });
-    s1.addText(`${c.score.toFixed(1)}`, { x: x + 0.2, y: chipY + 0.4, w: 3.3, h: 0.9, fontSize: 44, color: 'FFFFFF', fontFace: 'Georgia', italic: true });
-    s1.addText('/ 5', { x: x + 1.6, y: chipY + 0.7, w: 1, h: 0.5, fontSize: 14, color: MUTE, fontFace: 'Calibri' });
+    const x = 0.6 + i * 3.05;
+    s1.addShape(pptx.ShapeType.rect, { x, y: chipY, w: 2.85, h: 1.3, fill: { color: '081A33' }, line: { color: c.colour, width: 1 } });
+    s1.addText(c.label, { x: x + 0.2, y: chipY + 0.15, w: 2.55, h: 0.3, fontSize: 10, color: c.colour, fontFace: 'Calibri', bold: true, charSpacing: 3 });
+    s1.addText(`${c.score.toFixed(1)}`, { x: x + 0.2, y: chipY + 0.4, w: 2.55, h: 0.9, fontSize: 44, color: 'FFFFFF', fontFace: 'Georgia', italic: true });
+    s1.addText('/ 5', { x: x + 1.4, y: chipY + 0.7, w: 1, h: 0.5, fontSize: 14, color: MUTE, fontFace: 'Calibri' });
   });
 
-  s1.addText('A simple way to score AI use cases on value, risk and readiness — built for purpose-led organisations.', { x: 0.6, y: 6.95, w: 11, h: 0.4, fontSize: 11, color: 'AAB4C2', fontFace: 'Calibri', italic: true });
+  s1.addText('A simple way to score AI use cases on value, risk, readiness and timeframe — built for purpose-led organisations.', { x: 0.6, y: 6.95, w: 11, h: 0.4, fontSize: 11, color: 'AAB4C2', fontFace: 'Calibri', italic: true });
 
   // ---------- SLIDE 2: THE VERDICT ----------
   const s2 = pptx.addSlide();
@@ -1663,28 +1899,29 @@ function exportPpt(scores, customerName, useCaseName, isPreloaded, preloadedHead
   s3.background = { color: PAPER };
 
   s3.addText('SCORE BREAKDOWN', { x: 0.6, y: 0.5, w: 10, h: 0.35, fontSize: 11, color: TEAL, fontFace: 'Calibri', bold: true, charSpacing: 3 });
-  s3.addText('Three dimensions, fifteen questions', { x: 0.6, y: 0.85, w: 12, h: 0.6, fontSize: 28, color: NAVY, fontFace: 'Georgia' });
+  s3.addText('Four dimensions, twenty questions', { x: 0.6, y: 0.85, w: 12, h: 0.6, fontSize: 28, color: NAVY, fontFace: 'Georgia' });
 
-  // Three score cards
+  // Four score cards
   const cardY = 1.9;
   const cardData = [
     { label: 'VALUE', score: valueScore, colour: TEAL, blurb: 'Reach, time saved, outcomes, financial impact and visibility.' },
     { label: 'RISK', score: riskScore, colour: NAVY, blurb: 'Data sensitivity, autonomy, regulation, failure impact and adoption.' },
     { label: 'READINESS', score: readinessScore, colour: GREEN, blurb: 'Data, platform, sponsorship, governance and realistic time-to-start.' },
+    { label: 'TIMEFRAME', score: timeframeScore, colour: AMBER, blurb: 'Internal expertise, data engineering effort, integration, decision speed, blockers.' },
   ];
   cardData.forEach((c, i) => {
-    const x = 0.6 + i * 4.1;
-    s3.addShape(pptx.ShapeType.rect, { x, y: cardY, w: 3.85, h: 4.6, fill: { color: 'FFFFFF' }, line: { color: 'E3E1D8' } });
-    s3.addShape(pptx.ShapeType.rect, { x, y: cardY, w: 3.85, h: 0.08, fill: { color: c.colour }, line: { color: c.colour } });
-    s3.addText(c.label, { x: x + 0.3, y: cardY + 0.3, w: 3.3, h: 0.3, fontSize: 11, color: c.colour, fontFace: 'Calibri', bold: true, charSpacing: 3 });
-    s3.addText(`${c.score.toFixed(1)}`, { x: x + 0.3, y: cardY + 0.8, w: 3.3, h: 1.6, fontSize: 84, color: NAVY, fontFace: 'Georgia', italic: true });
-    s3.addText('/ 5', { x: x + 2.2, y: cardY + 1.65, w: 1.4, h: 0.5, fontSize: 18, color: MUTE, fontFace: 'Calibri' });
+    const x = 0.6 + i * 3.05;
+    s3.addShape(pptx.ShapeType.rect, { x, y: cardY, w: 2.85, h: 4.6, fill: { color: 'FFFFFF' }, line: { color: 'E3E1D8' } });
+    s3.addShape(pptx.ShapeType.rect, { x, y: cardY, w: 2.85, h: 0.08, fill: { color: c.colour }, line: { color: c.colour } });
+    s3.addText(c.label, { x: x + 0.25, y: cardY + 0.3, w: 2.4, h: 0.3, fontSize: 11, color: c.colour, fontFace: 'Calibri', bold: true, charSpacing: 3 });
+    s3.addText(`${c.score.toFixed(1)}`, { x: x + 0.25, y: cardY + 0.8, w: 2.4, h: 1.6, fontSize: 72, color: NAVY, fontFace: 'Georgia', italic: true });
+    s3.addText('/ 5', { x: x + 1.5, y: cardY + 1.55, w: 1.1, h: 0.5, fontSize: 16, color: MUTE, fontFace: 'Calibri' });
 
     // Mini-bar
-    s3.addShape(pptx.ShapeType.rect, { x: x + 0.3, y: cardY + 2.6, w: 3.3, h: 0.18, fill: { color: CREAM }, line: { color: CREAM } });
-    s3.addShape(pptx.ShapeType.rect, { x: x + 0.3, y: cardY + 2.6, w: 3.3 * (c.score / 5), h: 0.18, fill: { color: c.colour }, line: { color: c.colour } });
+    s3.addShape(pptx.ShapeType.rect, { x: x + 0.25, y: cardY + 2.6, w: 2.4, h: 0.18, fill: { color: CREAM }, line: { color: CREAM } });
+    s3.addShape(pptx.ShapeType.rect, { x: x + 0.25, y: cardY + 2.6, w: 2.4 * (c.score / 5), h: 0.18, fill: { color: c.colour }, line: { color: c.colour } });
 
-    s3.addText(c.blurb, { x: x + 0.3, y: cardY + 3.0, w: 3.3, h: 1.5, fontSize: 12, color: MUTE, fontFace: 'Calibri', valign: 'top' });
+    s3.addText(c.blurb, { x: x + 0.25, y: cardY + 3.0, w: 2.4, h: 1.5, fontSize: 11, color: MUTE, fontFace: 'Calibri', valign: 'top' });
   });
 
   // Per-question detail
@@ -1760,9 +1997,10 @@ function exportPpt(scores, customerName, useCaseName, isPreloaded, preloadedHead
   s4.addText(customerName, { x: px + 0.25, y: 2.55, w: 3.1, h: 0.45, fontSize: 15, color: NAVY, fontFace: 'Calibri', bold: true });
   s4.addText(useCaseName, { x: px + 0.25, y: 3.05, w: 3.1, h: 1, fontSize: 12, color: INK, fontFace: 'Calibri', italic: true });
 
-  s4.addText(`Value: ${valueScore.toFixed(1)} / 5`, { x: px + 0.25, y: 4.4, w: 3.1, h: 0.35, fontSize: 13, color: NAVY, fontFace: 'Calibri', bold: true });
-  s4.addText(`Risk: ${riskScore.toFixed(1)} / 5`, { x: px + 0.25, y: 4.85, w: 3.1, h: 0.35, fontSize: 13, color: NAVY, fontFace: 'Calibri', bold: true });
-  s4.addText(`Readiness: ${readinessScore.toFixed(1)} / 5`, { x: px + 0.25, y: 5.3, w: 3.1, h: 0.35, fontSize: 13, color: NAVY, fontFace: 'Calibri', bold: true });
+  s4.addText(`Value: ${valueScore.toFixed(1)} / 5`, { x: px + 0.25, y: 4.3, w: 3.1, h: 0.32, fontSize: 12, color: NAVY, fontFace: 'Calibri', bold: true });
+  s4.addText(`Risk: ${riskScore.toFixed(1)} / 5`, { x: px + 0.25, y: 4.65, w: 3.1, h: 0.32, fontSize: 12, color: NAVY, fontFace: 'Calibri', bold: true });
+  s4.addText(`Readiness: ${readinessScore.toFixed(1)} / 5`, { x: px + 0.25, y: 5.0, w: 3.1, h: 0.32, fontSize: 12, color: NAVY, fontFace: 'Calibri', bold: true });
+  s4.addText(`Timeframe: ${timeframeScore.toFixed(1)} / 5`, { x: px + 0.25, y: 5.35, w: 3.1, h: 0.32, fontSize: 12, color: NAVY, fontFace: 'Calibri', bold: true });
 
   s4.addText('Up-and-right is the sweet spot. Larger bubble = readier to deliver.', { x: px + 0.25, y: 6.0, w: 3.1, h: 0.6, fontSize: 10, color: MUTE, fontFace: 'Calibri', italic: true });
 
@@ -1851,11 +2089,88 @@ function exportPpt(scores, customerName, useCaseName, isPreloaded, preloadedHead
 // ============================================================
 
 const FRAUD_USE_CASE_BRIEF = `
-The customer wants to use Microsoft Fabric and agentic AI to detect fraud in real-time
-across banking and card transactions. Typical data: transaction events, customer master,
-merchant master, device/session signals, historical case outcomes. Expected outcomes:
-detection latency dropped from hours to seconds, 25–30% reduction in false positives,
-auditable decisions for the FCA and internal risk committees.
+The customer wants to use Microsoft Fabric and agentic AI to detect fraud in real time
+across card and online banking transactions. The agent's job is to score transactions,
+triage cases, draft analyst notes, and learn from human feedback — humans remain in the
+loop for blocking, refunding, and customer contact.
+
+DATA REQUIREMENTS — what needs to be in OneLake:
+- Transaction events: card auth, online banking transactions, account events. Schema:
+  txn_id, customer_id, account_id, merchant_id, amount, currency, channel, timestamp,
+  device_fingerprint, ip, geo, MCC, auth_result. Ideally arriving via Eventstream
+  within seconds of the event.
+- Customer 360: KYC, account history, demographics, behavioural baselines, watchlist
+  flags, contact preferences.
+- Merchant master: merchant_id, category, risk grade, historical chargeback rate.
+- Device & session signals: device fingerprint, session ID, IP reputation, biometric
+  signals where available.
+- Historical case outcomes: confirmed fraud, false positive, customer dispute outcome —
+  this is the training and feedback loop signal.
+- Policy & playbook documents: unstructured (PDFs, SharePoint pages) — ingested into a
+  Fabric vector index so the agent can reason over policy when triaging.
+
+ENVIRONMENT REQUIREMENTS:
+- Azure tenancy with Entra ID for authentication and conditional access.
+- Microsoft Fabric capacity (see FABRIC_LICENSING for sizing).
+- Network: private endpoints for Fabric, VNet integration with the bank's network zones,
+  service tags / NSGs scoped to core banking and fraud platform integration.
+- Purview tenant for governance, DLP, audit and insider risk.
+- Azure ML or Azure Databricks workspace for model training and serving.
+
+TECHNICAL REQUIREMENTS:
+- Real-time ingestion: Eventstream consumers configured against the core banking event
+  bus (Kafka, Event Hubs or core banking webhook).
+- KQL database (Fabric Real-Time Intelligence) for hot-path querying of the last 7–30
+  days of transactions.
+- Lakehouse with medallion architecture (Bronze raw, Silver cleansed & joined, Gold
+  feature-engineered for ML and analyst views).
+- Fabric Data Agents wired to the Lakehouse with a custom Azure AI Search index over
+  policy documents.
+- MLflow model registry, Azure ML endpoint for real-time inference (sub-100ms target).
+- Power BI Direct Lake semantic model + a fraud ops dashboard for analysts.
+- Microsoft Teams or ServiceNow integration for agent-driven case escalation.
+
+ROI MATHS — the way Simpson would model the business case in a discovery workshop:
+- Loss reduction: typical mid-sized UK bank loses £15–40m a year to first- and third-party
+  fraud. A well-tuned ML + agent stack on Fabric pattern delivers 15–25% reduction in
+  losses — a £3–8m annualised benefit on conservative assumptions.
+- Analyst efficiency: fraud analysts spend 40–60% of their time triaging false positives.
+  A 25–30% false positive reduction (industry-proven figure on this pattern) reclaims
+  ~£500k–£1.5m a year of analyst capacity on a 40-analyst team.
+- Customer friction: 30–50% reduction in incorrectly-declined good transactions = direct
+  revenue protection (5–10 basis points on declined interchange) and reduced customer
+  contact costs.
+- Regulatory & ops resilience: agent-produced audit trails reduce manual case
+  documentation effort by 60%+ and improve FCA / PRA evidencing.
+- Total typical first-year benefit on a mid-sized UK retail bank: £4–10m. PoV cost in
+  the £150–300k range. First-year ROI 10x+ at the bottom of the range.
+`.trim();
+
+const FABRIC_LICENSING = `
+MICROSOFT FABRIC LICENSING REFERENCE (capacity SKUs):
+- F2 (2 CU): development and PoV scenarios only. ~$262/month pay-as-you-go.
+- F4 (4 CU): small departmental use, light streaming.
+- F8 (8 CU): typical PoV for a real-time fraud pattern at modest volume.
+- F16 (16 CU): production-grade for a mid-sized bank's fraud workload during the day.
+- F32 / F64 (32–64 CU): production at scale, full Real-Time Intelligence + Power BI
+  embedded reporting. F64 is the equivalent of the old Power BI P1 SKU and is the
+  typical landing zone for a mid-sized UK bank.
+- F128+: very large banks or multi-LOB platforms.
+
+Reservations save ~40% versus pay-as-you-go.
+
+OTHER LICENSING TO FACTOR IN:
+- Power BI Pro per user (~£8.20/user/month) — required for any user to interact with
+  Power BI content unless a Fabric capacity F64+ is in place.
+- Azure OpenAI / model consumption (if using Azure-hosted Claude or GPT models for the
+  agent reasoning) — typically £500–£3,000/month for a fraud agent workload.
+- Microsoft 365 Copilot is separate and not required for the Fabric agent pattern.
+- Microsoft Purview is licensed via E5 Compliance, Purview standalone, or Microsoft 365
+  Compliance add-on. Most banks already have this.
+
+When asked about licensing, anchor on the customer's likely current state (Microsoft 365
+E3/E5, Azure tenancy, existing Power BI Premium or Fabric trial) and identify what they'd
+need to add. Always note Fabric reservations as the right commercial move.
 `.trim();
 
 const FABRIC_ARCHITECTURE = `
@@ -1896,34 +2211,41 @@ PRISM assessment scores and walk them through, conversationally, what Simpson wo
 them in Microsoft Fabric for their fraud detection use case.
 
 Hard rules:
-- ALWAYS ground your answers in the PRISM scores you've been given. If readiness is low,
-  say so directly and adjust your recommendation. Don't be vague or generic.
+- ALWAYS ground your answers in the PRISM scores you've been given — all four dimensions
+  (Value, Risk, Readiness, Timeframe). If readiness is low, say so directly and adjust your
+  recommendation. If timeframe is low (i.e. lots of effort and slow decision making), be
+  honest about runway. Don't be vague or generic.
 - Use British English spelling throughout (organisation, optimise, realise, behaviour).
 - Speak in Simpson's voice: warm, expert, honest, never breathless about AI. You are an
   experienced consultant, not a salesperson.
 - Keep responses focused. 3–5 short paragraphs maximum unless explicitly asked for more depth.
 - Reference real Microsoft Fabric capabilities (OneLake, Eventstream, Real-Time Intelligence,
   Fabric Data Agents, Direct Lake, Purview) by their actual names.
-- When asked about cost or timeline, give a range with the caveats that drive it.
+- When asked about cost or timeline, give a range with the caveats that drive it. Use the
+  Fabric capacity SKU language (F2, F8, F32, F64) when it adds precision.
+- When asked about ROI, show the maths from the FRAUD_USE_CASE_BRIEF — loss reduction,
+  analyst efficiency, customer friction, regulatory efficiency. Be explicit about
+  assumptions.
 - If asked something outside the brief (e.g. a completely different use case), bring it
   back to fraud detection or politely flag that this agent is scoped to the current PRISM
   assessment.
 - Never invent a Simpson Associates case study that doesn't exist. The one real published
   example you can reference is North Yorkshire Council (children's social care, NOT fraud).
   For fraud detection, speak about the proven pattern in industry, not a fabricated client.
-- When you propose something concrete (an architecture choice, a timeline, a cost band, a
-  delivery phase), the user may want to add it to the Implementation Brief on the right of
-  their screen. If you've just proposed something brief-worthy, append a JSON block at the
-  very end of your message in this exact format and nothing else after it:
+- When you propose something concrete (architecture, licensing, requirements, ROI, timeline,
+  cost), the user may want to add it to the Implementation Brief on the right of their
+  screen. If you've just proposed something brief-worthy, append a JSON block at the very
+  end of your message in this exact format and nothing else after it:
 
-  [[BRIEF_UPDATE]]{"architecture": "...", "phase1": "...", "timeline": "...", "cost_band": "...", "governance": "...", "first_90_days": "..."}[[/BRIEF_UPDATE]]
+  [[BRIEF_UPDATE]]{"architecture": "...", "current_licensing": "...", "recommended_licensing": "...", "technical_requirements": "...", "data_requirements": "...", "environment_requirements": "...", "phase1": "...", "timeline": "...", "cost_band": "...", "roi_estimate": "...", "cost_vs_return": "...", "governance": "...", "first_90_days": "..."}[[/BRIEF_UPDATE]]
 
   Only include the fields that the latest answer genuinely informs. Do not repeat fields
   that haven't changed. The user does not see this block — it's parsed and rendered into
-  the Brief panel for them.
+  the Brief panel for them. Keep each field to 1–3 short sentences. Use British English
+  there too.
 `.trim();
 
-function buildSystemPrompt(customerName, useCaseName, scores, valueAvg, riskAvg, readinessAvg, verdict, isPreloaded) {
+function buildSystemPrompt(customerName, useCaseName, scores, valueAvg, riskAvg, readinessAvg, timeframeAvg, verdict, isPreloaded, isImaginary) {
   const scoreLines = Object.entries(scores)
     .map(([k, v]) => `  ${k}: ${v}/5`)
     .join('\n');
@@ -1933,30 +2255,39 @@ function buildSystemPrompt(customerName, useCaseName, scores, valueAvg, riskAvg,
 CUSTOMER CONTEXT:
 - Customer: ${customerName}
 - Use case in their PRISM assessment: ${useCaseName}
-- ${isPreloaded ? 'This is a worked example (pre-loaded into PRISM).' : 'This is a live customer assessment.'}
+- ${isImaginary
+    ? 'This is an IMAGINARY worked example used to demonstrate the framework on a commercial use case. You can speak as if this were a real bank engagement but should not invent specifics that imply a real Simpson client.'
+    : isPreloaded
+      ? 'This is a worked example (pre-loaded into PRISM).'
+      : 'This is a live customer assessment.'}
 
 FRAUD DETECTION CONTEXT YOU CAN ASSUME:
 ${FRAUD_USE_CASE_BRIEF}
 
-PRISM ASSESSMENT RESULT:
+PRISM ASSESSMENT RESULT (all four dimensions):
 - Value average: ${valueAvg.toFixed(1)}/5
 - Risk average: ${riskAvg.toFixed(1)}/5  (lower = less risky)
 - Readiness average: ${readinessAvg.toFixed(1)}/5
+- Timeframe average: ${timeframeAvg.toFixed(1)}/5  (higher = quicker / less effort)
 - Overall verdict: "${verdict.title}"
 - Verdict summary: ${verdict.summary}
 - Recommended next step from PRISM: ${verdict.recommendation}
 
-Individual question scores (see QUESTIONS map for what each refers to):
+Individual question scores (v=value, r=risk, d=readiness, t=timeframe):
 ${scoreLines}
 
 MICROSOFT FABRIC ARCHITECTURE YOU KNOW:
 ${FABRIC_ARCHITECTURE}
 
+MICROSOFT FABRIC LICENSING YOU KNOW:
+${FABRIC_LICENSING}
+
 SIMPSON ASSOCIATES POSITIONING:
 ${SIMPSON_POSITIONING}
 
 Now greet the customer warmly, anchor in their actual PRISM result (don't be generic —
-quote their averages or the verdict), and offer 2–3 specific things you can walk them through.`;
+quote their averages and the verdict), and offer 3–4 specific things you can walk them
+through (architecture, licensing, ROI maths, timeline, governance, technical requirements).`;
 }
 
 function extractBriefUpdate(text) {
@@ -2017,11 +2348,12 @@ function renderInline(text) {
   return parts;
 }
 
-function FabricAgent({ customerName, useCaseName, scores, isPreloaded, onBack }) {
+function FabricAgent({ customerName, useCaseName, scores, isPreloaded, isImaginary, onBack }) {
   const valueAvg = useMemo(() => avg(scores, QUESTIONS.value.map(q => q.id)), [scores]);
   const riskAvg = useMemo(() => avg(scores, QUESTIONS.risk.map(q => q.id)), [scores]);
   const readinessAvg = useMemo(() => avg(scores, QUESTIONS.readiness.map(q => q.id)), [scores]);
-  const verdict = useMemo(() => getVerdict(valueAvg, riskAvg, readinessAvg), [valueAvg, riskAvg, readinessAvg]);
+  const timeframeAvg = useMemo(() => avg(scores, QUESTIONS.timeframe.map(q => q.id)), [scores]);
+  const verdict = useMemo(() => getVerdict(valueAvg, riskAvg, readinessAvg, timeframeAvg), [valueAvg, riskAvg, readinessAvg, timeframeAvg]);
 
   const [apiKey, setApiKey] = useState('');
   const [keyAccepted, setKeyAccepted] = useState(false);
@@ -2034,8 +2366,8 @@ function FabricAgent({ customerName, useCaseName, scores, isPreloaded, onBack })
   const initialised = useRef(false);
 
   const systemPrompt = useMemo(
-    () => buildSystemPrompt(customerName, useCaseName, scores, valueAvg, riskAvg, readinessAvg, verdict, isPreloaded),
-    [customerName, useCaseName, scores, valueAvg, riskAvg, readinessAvg, verdict, isPreloaded]
+    () => buildSystemPrompt(customerName, useCaseName, scores, valueAvg, riskAvg, readinessAvg, timeframeAvg, verdict, isPreloaded, isImaginary),
+    [customerName, useCaseName, scores, valueAvg, riskAvg, readinessAvg, timeframeAvg, verdict, isPreloaded, isImaginary]
   );
 
   useEffect(() => {
@@ -2176,11 +2508,12 @@ function FabricAgent({ customerName, useCaseName, scores, isPreloaded, onBack })
 
   // Suggested follow-up prompts
   const suggestions = [
+    'Show me the ROI maths for this fraud use case',
+    'What licensing would we actually need on Fabric?',
+    'What does the data need to look like in OneLake?',
     'What would the first 90 days look like?',
-    'How would governance work in a regulated environment?',
-    'Where does Databricks fit alongside Fabric here?',
-    'What\'s a realistic cost range for a Proof of Value?',
-    'How does the agent itself get trained on our policies?',
+    'How would governance work for FCA regulation?',
+    'What\'s a realistic cost vs return picture?',
   ];
 
   // ====== API KEY ENTRY SCREEN ======
@@ -2279,6 +2612,10 @@ function FabricAgent({ customerName, useCaseName, scores, isPreloaded, onBack })
                 <div className="lbl">Ready</div>
                 <div className="num">{readinessAvg.toFixed(1)}</div>
               </div>
+              <div className="ctx-score">
+                <div className="lbl">Time</div>
+                <div className="num">{timeframeAvg.toFixed(1)}</div>
+              </div>
             </div>
             <div style={{ fontSize: 12, color: 'var(--sa-mute)', marginTop: 10, lineHeight: 1.4, fontStyle: 'italic' }}>
               "{verdict.title}"
@@ -2288,8 +2625,10 @@ function FabricAgent({ customerName, useCaseName, scores, isPreloaded, onBack })
           <div className="ctx-block">
             <div className="ctx-label">Knowledge Sources</div>
             <div className="ctx-knows">
-              <div className="ctx-knows-item">Your PRISM scores & rationale</div>
+              <div className="ctx-knows-item">Your PRISM scores & rationale (4 dimensions)</div>
               <div className="ctx-knows-item">Microsoft Fabric reference architecture for fraud detection</div>
+              <div className="ctx-knows-item">Fabric capacity SKU sizing & licensing</div>
+              <div className="ctx-knows-item">Industry fraud detection ROI maths</div>
               <div className="ctx-knows-item">Simpson's PoV delivery playbook</div>
               <div className="ctx-knows-item">Purview governance pattern for regulated AI</div>
               <div className="ctx-knows-item">Databricks ↔ Fabric interop on OneLake</div>
@@ -2401,6 +2740,36 @@ function FabricAgent({ customerName, useCaseName, scores, isPreloaded, onBack })
                   <div className="body">{brief.architecture}</div>
                 </div>
               )}
+              {brief.data_requirements && (
+                <div className="brief-section">
+                  <div className="label">Data Requirements</div>
+                  <div className="body">{brief.data_requirements}</div>
+                </div>
+              )}
+              {brief.environment_requirements && (
+                <div className="brief-section">
+                  <div className="label">Environment Requirements</div>
+                  <div className="body">{brief.environment_requirements}</div>
+                </div>
+              )}
+              {brief.technical_requirements && (
+                <div className="brief-section">
+                  <div className="label">Technical Requirements</div>
+                  <div className="body">{brief.technical_requirements}</div>
+                </div>
+              )}
+              {brief.current_licensing && (
+                <div className="brief-section">
+                  <div className="label">Current Licensing</div>
+                  <div className="body">{brief.current_licensing}</div>
+                </div>
+              )}
+              {brief.recommended_licensing && (
+                <div className="brief-section">
+                  <div className="label">Recommended Licensing</div>
+                  <div className="body">{brief.recommended_licensing}</div>
+                </div>
+              )}
               {brief.phase1 && (
                 <div className="brief-section">
                   <div className="label">Phase 1 — Proof of Value</div>
@@ -2417,6 +2786,18 @@ function FabricAgent({ customerName, useCaseName, scores, isPreloaded, onBack })
                 <div className="brief-section">
                   <div className="label">Cost Band</div>
                   <div className="body">{brief.cost_band}</div>
+                </div>
+              )}
+              {brief.roi_estimate && (
+                <div className="brief-section">
+                  <div className="label">ROI Estimate</div>
+                  <div className="body">{brief.roi_estimate}</div>
+                </div>
+              )}
+              {brief.cost_vs_return && (
+                <div className="brief-section">
+                  <div className="label">Cost vs Return</div>
+                  <div className="body">{brief.cost_vs_return}</div>
                 </div>
               )}
               {brief.governance && (
@@ -2448,6 +2829,7 @@ function App() {
   const [customerName, setCustomerName] = useState('');
   const [useCaseName, setUseCaseName] = useState('');
   const [isPreloaded, setIsPreloaded] = useState(false);
+  const [isImaginary, setIsImaginary] = useState(false);
   const [preloadedHeadlines, setPreloadedHeadlines] = useState(null);
   const [rationale, setRationale] = useState(null);
 
@@ -2456,6 +2838,7 @@ function App() {
     setCustomerName('');
     setUseCaseName('');
     setIsPreloaded(false);
+    setIsImaginary(false);
     setPreloadedHeadlines(null);
     setRationale(null);
     setStage('assess');
@@ -2467,6 +2850,7 @@ function App() {
     setCustomerName(c.customer);
     setUseCaseName(c.useCase);
     setIsPreloaded(true);
+    setIsImaginary(!!c.isImaginary);
     setPreloadedHeadlines(c.headlines);
     setRationale(c.rationale || null);
     setStage('results');
@@ -2478,6 +2862,7 @@ function App() {
     setCustomerName('');
     setUseCaseName('');
     setIsPreloaded(false);
+    setIsImaginary(false);
     setPreloadedHeadlines(null);
     setRationale(null);
   };
@@ -2527,6 +2912,7 @@ function App() {
           useCaseName={useCaseName}
           scores={scores}
           isPreloaded={isPreloaded}
+          isImaginary={isImaginary}
           onBack={() => setStage('results')}
         />
       )}
