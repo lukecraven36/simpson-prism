@@ -2258,6 +2258,7 @@ Conversation rules:
 - Speak in Simpson's voice: warm, expert, honest, never breathless about AI. Experienced
   consultant, not a salesperson.
 - Keep responses focused. 3–5 short paragraphs unless explicitly asked for more depth.
+  Aim for under 400 words of prose — leave room for the mandatory [[BRIEF_UPDATE]] block.
 - Reference real Microsoft Fabric capabilities (OneLake, Eventstream, Real-Time Intelligence,
   Fabric Data Agents, Direct Lake, Purview) by their actual names.
 - When asked about cost or timeline, give a range with the caveats that drive it. Use
@@ -2477,7 +2478,7 @@ function FabricAgent({ customerName, useCaseName, scores, isPreloaded, isImagina
         },
         body: JSON.stringify({
           model: 'claude-sonnet-4-5',
-          max_tokens: 1024,
+          max_tokens: 2500,
           system: systemPrompt,
           messages: apiMessages,
           stream: true,
