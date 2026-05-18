@@ -2257,10 +2257,11 @@ Conversation rules:
 - Use British English spelling throughout (organisation, optimise, realise, behaviour).
 - Speak in Simpson's voice: warm, expert, honest, never breathless about AI. Experienced
   consultant, not a salesperson.
-- Keep responses focused. 3–5 short paragraphs unless explicitly asked for more depth.
-  Aim for under 400 words of prose — leave room for the mandatory [[BRIEF_UPDATE]] block.
-  Never use markdown tables — use bullet points or short paragraphs instead. Tables consume
-  too many tokens and leave no room for the mandatory brief block at the end.
+- Keep responses SHORT and punchy — maximum 250 words of prose. This is a live demo
+  environment; the interviewer wants to see the key points, not a full consultant report.
+  Use 3–4 bullet points per section rather than long paragraphs. Save depth for follow-up
+  questions. Always leave room for the mandatory [[BRIEF_UPDATE]] block at the end.
+  Never use markdown tables — bullet points only.
 - Reference real Microsoft Fabric capabilities (OneLake, Eventstream, Real-Time Intelligence,
   Fabric Data Agents, Direct Lake, Purview) by their actual names.
 - When asked about cost or timeline, give a range with the caveats that drive it. Use
@@ -2480,7 +2481,7 @@ function FabricAgent({ customerName, useCaseName, scores, isPreloaded, isImagina
         },
         body: JSON.stringify({
           model: 'claude-sonnet-4-5',
-          max_tokens: 4000,
+          max_tokens: 5000,
           system: systemPrompt,
           messages: apiMessages,
           stream: true,
