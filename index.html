@@ -2259,6 +2259,8 @@ Conversation rules:
   consultant, not a salesperson.
 - Keep responses focused. 3–5 short paragraphs unless explicitly asked for more depth.
   Aim for under 400 words of prose — leave room for the mandatory [[BRIEF_UPDATE]] block.
+  Never use markdown tables — use bullet points or short paragraphs instead. Tables consume
+  too many tokens and leave no room for the mandatory brief block at the end.
 - Reference real Microsoft Fabric capabilities (OneLake, Eventstream, Real-Time Intelligence,
   Fabric Data Agents, Direct Lake, Purview) by their actual names.
 - When asked about cost or timeline, give a range with the caveats that drive it. Use
@@ -2478,7 +2480,7 @@ function FabricAgent({ customerName, useCaseName, scores, isPreloaded, isImagina
         },
         body: JSON.stringify({
           model: 'claude-sonnet-4-5',
-          max_tokens: 2500,
+          max_tokens: 4000,
           system: systemPrompt,
           messages: apiMessages,
           stream: true,
@@ -2572,7 +2574,7 @@ function FabricAgent({ customerName, useCaseName, scores, isPreloaded, isImagina
     setKeyAccepted(true);
     // Kick off the agent's opening message
     setTimeout(() => {
-      callAgent([], 'Please greet me and walk me through how you\'d approach this engagement based on the PRISM scores you can see.');
+      callAgent([], 'Please give me a brief, warm opening greeting — 3 short paragraphs maximum. Summarise the PRISM verdict in plain terms, name the one thing that stands out most from the four scores, and offer 3 specific topics I can ask you to go deeper on. Keep it concise — I\'ll ask follow-up questions.');
     }, 100);
   };
 
