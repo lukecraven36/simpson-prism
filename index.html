@@ -2206,43 +2206,69 @@ PoV engagement, then phased delivery.
 `.trim();
 
 const AGENT_GUARDRAILS = `
+=== MANDATORY OUTPUT FORMAT — READ THIS FIRST ===
+
+Every single response you give MUST end with a [[BRIEF_UPDATE]] block. No exceptions.
+This is the most important instruction in this prompt. Even if the user asks a simple
+clarifying question, even if your answer is short, you MUST append the block.
+
+The block format is:
+[[BRIEF_UPDATE]]{"field": "value", ...}[[/BRIEF_UPDATE]]
+
+Available fields — only include the ones your latest answer genuinely informs:
+- "architecture": recommended Fabric architecture summary
+- "current_licensing": what the customer likely has today
+- "recommended_licensing": what they need to add (SKU, cost range)
+- "technical_requirements": key technical components needed
+- "data_requirements": what data needs to land in OneLake and how
+- "environment_requirements": Azure tenancy, network, Purview, Entra setup needed
+- "phase1": what a Proof of Value engagement would cover
+- "timeline": indicative delivery timeline
+- "cost_band": implementation cost range
+- "roi_estimate": expected return with headline numbers
+- "cost_vs_return": PoV cost vs first-year benefit summary
+- "governance": Purview, responsible AI, FCA audit trail approach
+- "first_90_days": concrete first 90 days plan
+
+Rules for the block:
+- It MUST appear at the very end of your message, after all prose
+- It MUST be valid JSON inside the delimiters
+- Each value MUST be a short string (1–3 sentences max, British English)
+- Do NOT include fields you haven't discussed in this response
+- The user never sees this block — it populates the Implementation Brief panel
+- If you have nothing new to add, still include the block with at least one field
+  summarising what you just covered (e.g. "architecture" or "first_90_days")
+
+EXAMPLE of a correctly formatted response ending:
+...your prose answer here...
+
+[[BRIEF_UPDATE]]{"roi_estimate": "Conservative first-year benefit of £4–10m based on 15–25% fraud loss reduction plus £270k analyst efficiency gain. Assumes mid-sized UK bank with £15–40m annual fraud losses.", "cost_vs_return": "PoV engagement cost £150–300k. First-year ROI 10x+ at bottom of range. Payback period under 3 months in production."}[[/BRIEF_UPDATE]]
+
+=== END OF MANDATORY FORMAT INSTRUCTION ===
+
 You are the Simpson Associates Fabric Implementation Agent. Your job is to take the customer's
 PRISM assessment scores and walk them through, conversationally, what Simpson would build for
 them in Microsoft Fabric for their fraud detection use case.
 
-Hard rules:
+Conversation rules:
 - ALWAYS ground your answers in the PRISM scores you've been given — all four dimensions
   (Value, Risk, Readiness, Timeframe). If readiness is low, say so directly and adjust your
-  recommendation. If timeframe is low (i.e. lots of effort and slow decision making), be
-  honest about runway. Don't be vague or generic.
+  recommendation. If timeframe is low (lots of effort, slow decisions), be honest about runway.
 - Use British English spelling throughout (organisation, optimise, realise, behaviour).
-- Speak in Simpson's voice: warm, expert, honest, never breathless about AI. You are an
-  experienced consultant, not a salesperson.
-- Keep responses focused. 3–5 short paragraphs maximum unless explicitly asked for more depth.
+- Speak in Simpson's voice: warm, expert, honest, never breathless about AI. Experienced
+  consultant, not a salesperson.
+- Keep responses focused. 3–5 short paragraphs unless explicitly asked for more depth.
 - Reference real Microsoft Fabric capabilities (OneLake, Eventstream, Real-Time Intelligence,
   Fabric Data Agents, Direct Lake, Purview) by their actual names.
-- When asked about cost or timeline, give a range with the caveats that drive it. Use the
+- When asked about cost or timeline, give a range with the caveats that drive it. Use
   Fabric capacity SKU language (F2, F8, F32, F64) when it adds precision.
-- When asked about ROI, show the maths from the FRAUD_USE_CASE_BRIEF — loss reduction,
-  analyst efficiency, customer friction, regulatory efficiency. Be explicit about
-  assumptions.
-- If asked something outside the brief (e.g. a completely different use case), bring it
-  back to fraud detection or politely flag that this agent is scoped to the current PRISM
-  assessment.
-- Never invent a Simpson Associates case study that doesn't exist. The one real published
-  example you can reference is North Yorkshire Council (children's social care, NOT fraud).
-  For fraud detection, speak about the proven pattern in industry, not a fabricated client.
-- When you propose something concrete (architecture, licensing, requirements, ROI, timeline,
-  cost), the user may want to add it to the Implementation Brief on the right of their
-  screen. If you've just proposed something brief-worthy, append a JSON block at the very
-  end of your message in this exact format and nothing else after it:
-
-  [[BRIEF_UPDATE]]{"architecture": "...", "current_licensing": "...", "recommended_licensing": "...", "technical_requirements": "...", "data_requirements": "...", "environment_requirements": "...", "phase1": "...", "timeline": "...", "cost_band": "...", "roi_estimate": "...", "cost_vs_return": "...", "governance": "...", "first_90_days": "..."}[[/BRIEF_UPDATE]]
-
-  Only include the fields that the latest answer genuinely informs. Do not repeat fields
-  that haven't changed. The user does not see this block — it's parsed and rendered into
-  the Brief panel for them. Keep each field to 1–3 short sentences. Use British English
-  there too.
+- When asked about ROI, show the maths — loss reduction, analyst efficiency, customer
+  friction, regulatory efficiency. Be explicit about assumptions.
+- Never invent a Simpson Associates case study. The one real published example is North
+  Yorkshire Council (children's social care, NOT fraud). For fraud, speak about the proven
+  pattern in industry.
+- If asked something outside the brief, bring it back to fraud detection or politely flag
+  that this agent is scoped to the current PRISM assessment.
 `.trim();
 
 function buildSystemPrompt(customerName, useCaseName, scores, valueAvg, riskAvg, readinessAvg, timeframeAvg, verdict, isPreloaded, isImaginary) {
@@ -2297,6 +2323,51 @@ function extractBriefUpdate(text) {
   try { update = JSON.parse(m[1].trim()); } catch (e) { update = null; }
   const cleaned = text.replace(/\[\[BRIEF_UPDATE\]\][\s\S]*?\[\[\/BRIEF_UPDATE\]\]/, '').trim();
   return { cleaned, update };
+}
+
+// Silent fallback: if the agent forgot to emit a BRIEF_UPDATE block, we fire a tiny
+// non-streamed call asking it to extract what was just discussed into one.
+// This is invisible to the user — no message appears, only the brief panel updates.
+async function silentBriefExtract(apiKey, agentResponse, existingBrief) {
+  const extractPrompt = `You are a JSON extraction assistant. Read the following agent response and extract any concrete recommendations into a BRIEF_UPDATE block.
+
+The agent response to extract from:
+---
+${agentResponse.slice(0, 3000)}
+---
+
+Current brief state (do not repeat fields that already have good content unless this response significantly updates them):
+${JSON.stringify(existingBrief, null, 2)}
+
+Available fields: architecture, current_licensing, recommended_licensing, technical_requirements, data_requirements, environment_requirements, phase1, timeline, cost_band, roi_estimate, cost_vs_return, governance, first_90_days
+
+Respond with ONLY a [[BRIEF_UPDATE]] block and nothing else. Each field value must be 1–3 sentences in British English. Only include fields where the agent response genuinely provides new, concrete information.
+
+[[BRIEF_UPDATE]]{"field": "value"}[[/BRIEF_UPDATE]]`;
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001', // Use Haiku for this — cheap, fast, no streaming needed
+        max_tokens: 400,
+        messages: [{ role: 'user', content: extractPrompt }],
+      }),
+    });
+    if (!resp.ok) return null;
+    const data = await resp.json();
+    const text = data.content?.map(b => b.text || '').join('') || '';
+    const { update } = extractBriefUpdate(text);
+    return update;
+  } catch (e) {
+    return null;
+  }
 }
 
 // Very small markdown-ish renderer for chat bubbles (paragraphs, bold, lists, code).
@@ -2362,8 +2433,12 @@ function FabricAgent({ customerName, useCaseName, scores, isPreloaded, isImagina
   const [isStreaming, setIsStreaming] = useState(false);
   const [error, setError] = useState(null);
   const [brief, setBrief] = useState({});
+  const briefRef = useRef({}); // kept in sync so async callbacks always see current value
   const messagesEndRef = useRef(null);
   const initialised = useRef(false);
+
+  // Keep briefRef in sync with brief state
+  useEffect(() => { briefRef.current = brief; }, [brief]);
 
   const systemPrompt = useMemo(
     () => buildSystemPrompt(customerName, useCaseName, scores, valueAvg, riskAvg, readinessAvg, timeframeAvg, verdict, isPreloaded, isImaginary),
@@ -2463,6 +2538,14 @@ function FabricAgent({ customerName, useCaseName, scores, isPreloaded, isImagina
       });
       if (update) {
         setBrief(prev => ({ ...prev, ...update }));
+      } else {
+        // Agent forgot to emit a BRIEF_UPDATE block — fire a silent extraction call
+        // using Haiku to keep it cheap and fast. User never sees this.
+        silentBriefExtract(apiKey, cleaned || fullText, briefRef.current).then(fallbackUpdate => {
+          if (fallbackUpdate) {
+            setBrief(prev => ({ ...prev, ...fallbackUpdate }));
+          }
+        });
       }
     } catch (err) {
       setError(err.message || 'Something went wrong calling the agent.');
