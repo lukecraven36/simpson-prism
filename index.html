@@ -1773,6 +1773,11 @@ function Results({ scores, customerName, useCaseName, onRestart, onExport, onAct
               Pick two different dimensions for the plot to make sense.
             </span>
           )}
+          {xAxis !== yAxis && (
+            <span style={{ fontSize: 12, color: 'var(--sa-mute)', background: 'var(--sa-cream)', padding: '6px 12px', borderRadius: 4, borderLeft: '3px solid var(--sa-teal)' }}>
+              Bubble position reflects <strong style={{color:'var(--sa-navy)'}}>{axisLabels[xAxis]}</strong> (X) and <strong style={{color:'var(--sa-navy)'}}>{axisLabels[yAxis]}</strong> (Y) only. Bubble size reflects Readiness ({readinessScore.toFixed(1)}/5).
+            </span>
+          )}
         </div>
 
         <div className="matrix-wrap">
@@ -1810,21 +1815,23 @@ function Results({ scores, customerName, useCaseName, onRestart, onExport, onAct
                 }}
                 title={`${axisLabels[xAxis]}: ${allScores[xAxis].toFixed(1)}/5 · ${axisLabels[yAxis]}: ${allScores[yAxis].toFixed(1)}/5 · Readiness: ${readinessScore.toFixed(1)}/5`}
               >
-                <div className="matrix-point-label">{customerName} · {readinessScore.toFixed(1)} ready</div>
-                {allScores[xAxis].toFixed(1)}
+                <div className="matrix-point-label">{customerName}</div>
+                <div style={{fontSize: 10, lineHeight: 1.2, textAlign: 'center'}}>
+                  <div>{axisLabels[xAxis][0]}: {allScores[xAxis].toFixed(1)}</div>
+                  <div>{axisLabels[yAxis][0]}: {allScores[yAxis].toFixed(1)}</div>
+                </div>
               </div>
             )}
           </div>
         </div>
 
-        <p style={{ fontSize: 12, color: 'var(--sa-mute)', marginTop: 20, lineHeight: 1.55 }}>
-          <strong style={{ color: 'var(--sa-navy)' }}>Reading the chart:</strong>{' '}
-          Top-right is the sweet spot — both dimensions favourable. Bubble size = Readiness (larger = more ready to deliver today).{' '}
-          <strong style={{ color: 'var(--sa-navy)' }}>Direction guide:</strong>{' '}
-          <strong>Value</strong> — higher score = higher value (right/up = good).{' '}
-          <strong>Risk</strong> — higher score = higher risk, axis is inverted so right/up = <em>lower</em> risk (good).{' '}
-          <strong>Readiness</strong> — higher score = more ready (right/up = good).{' '}
-          <strong>Timeframe</strong> — higher score = easier/faster to deliver (right/up = good).
+        <p style={{ fontSize: 12, color: 'var(--sa-mute)', marginTop: 20, lineHeight: 1.7 }}>
+          <strong style={{ color: 'var(--sa-navy)' }}>How to read this chart:</strong>{' '}
+          The bubble is positioned using <strong style={{color:'var(--sa-navy)'}}>{axisLabels[xAxis]}</strong> on the X axis and <strong style={{color:'var(--sa-navy)'}}>{axisLabels[yAxis]}</strong> on the Y axis.
+          {' '}<strong>Top-right is always the sweet spot</strong> — both dimensions favourable.
+          {' '}The other two scores ({Object.keys(axisLabels).filter(k => k !== xAxis && k !== yAxis).map(k => axisLabels[k]).join(' and ')}) are shown in the score panel above but do not affect the bubble position.
+          {' '}Bubble <strong>size</strong> always reflects Readiness ({readinessScore.toFixed(1)}/5) — larger = more ready to deliver today.
+          {' '}<strong>Direction note:</strong> Risk is inverted — a higher Risk score means higher risk, so the axis is flipped so that right/up = <em>lower</em> risk (better). All other dimensions: higher score = better, so right/up = more favourable.
         </p>
       </div>
 
