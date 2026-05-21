@@ -1607,15 +1607,44 @@ function Results({ scores, customerName, useCaseName, onRestart, onExport, onAct
     readiness: 'Readiness',
     timeframe: 'Timeframe',
   };
-  // Risk is "inverted" in matrix interpretation: high risk = lower position visually when on Y axis
+  // Semantic meaning of "high score" for each dimension
+  // Risk: high score = HIGH risk = bad. Inverted so high risk lands LEFT/BOTTOM (unfavourable)
+  // Timeframe: high score = easy/fast to deliver = good. NOT inverted.
+  // Value/Readiness: high score = good. NOT inverted.
   const isInverted = (axis) => axis === 'risk';
+
+  // Human-readable label for what the axis direction means
+  const axisDirectionLabel = (axis, direction) => {
+    if (axis === 'risk') {
+      return direction === 'high' ? 'Lower risk (favourable)' : 'Higher risk (unfavourable)';
+    }
+    if (axis === 'timeframe') {
+      return direction === 'high' ? 'Easier / faster to deliver' : 'Harder / slower to deliver';
+    }
+    if (axis === 'value') {
+      return direction === 'high' ? 'High value' : 'Low value';
+    }
+    if (axis === 'readiness') {
+      return direction === 'high' ? 'More ready' : 'Less ready';
+    }
+    return direction === 'high' ? `High ${axisLabels[axis]}` : `Low ${axisLabels[axis]}`;
+  };
+
+  // For inverted axes (risk), high score maps to LOW visual position
+  // so visually: LEFT/BOTTOM = high risk (bad), RIGHT/TOP = low risk (good)
   const pctFor = (axis) => {
     const s = allScores[axis];
     return isInverted(axis) ? ((5 - s) / 5) * 100 : (s / 5) * 100;
   };
+
+  // What "high visual position" means for each axis
+  // isInverted: visually high = low score = good (e.g. Risk: top = low risk = good)
+  // not inverted: visually high = high score = good
+  const visualHighMeaning = (axis) => isInverted(axis) ? 'low' : 'high';
+
   const xPct = pctFor(xAxis);
   const yPct = pctFor(yAxis);
-  const bubbleSize = 36 + (readinessScore / 5) * 36; // still sized by readiness for visual cue
+  const bubbleSize = 36 + (readinessScore / 5) * 36;
 
   return (
     <div className="page">
@@ -1748,29 +1777,25 @@ function Results({ scores, customerName, useCaseName, onRestart, onExport, onAct
 
         <div className="matrix-wrap">
           <span className="matrix-ylabel">
-            {isInverted(yAxis)
-              ? `Lower ${axisLabels[yAxis].toLowerCase()} · ↑ · Higher ${axisLabels[yAxis].toLowerCase()}`
-              : `Higher ${axisLabels[yAxis].toLowerCase()} · ↑ · Lower ${axisLabels[yAxis].toLowerCase()}`}
+            {axisDirectionLabel(yAxis, 'low')} · ↑ · {axisDirectionLabel(yAxis, 'high')}
           </span>
           <span className="matrix-xlabel">
-            {isInverted(xAxis)
-              ? `→ Lower ${axisLabels[xAxis].toLowerCase()} · Higher ${axisLabels[xAxis].toLowerCase()} ←`
-              : `← Lower ${axisLabels[xAxis].toLowerCase()} · Higher ${axisLabels[xAxis].toLowerCase()} →`}
+            ← {axisDirectionLabel(xAxis, 'low')} · {axisDirectionLabel(xAxis, 'high')} →
           </span>
 
           <div className="matrix-grid">
             <div className="matrix-quadrant tl">
-              <div className="matrix-quad-label">{axisLabels[yAxis]} high · {axisLabels[xAxis]} low</div>
+              <div className="matrix-quad-label">{axisDirectionLabel(yAxis, 'high')} · {axisDirectionLabel(xAxis, 'low')}</div>
             </div>
             <div className="matrix-quadrant tr">
               <div className="matrix-quad-label">★ The sweet spot</div>
               <div className="matrix-quad-title">{axisLabels[xAxis]} & {axisLabels[yAxis]} both favourable</div>
             </div>
             <div className="matrix-quadrant bl">
-              <div className="matrix-quad-label">Both low — park</div>
+              <div className="matrix-quad-label">Both unfavourable — park or revisit</div>
             </div>
             <div className="matrix-quadrant br">
-              <div className="matrix-quad-label">{axisLabels[xAxis]} high · {axisLabels[yAxis]} low</div>
+              <div className="matrix-quad-label">{axisDirectionLabel(xAxis, 'high')} · {axisDirectionLabel(yAxis, 'low')}</div>
             </div>
 
             {xAxis !== yAxis && (
@@ -1783,7 +1808,7 @@ function Results({ scores, customerName, useCaseName, onRestart, onExport, onAct
                   height: bubbleSize,
                   fontSize: bubbleSize < 50 ? 11 : 13,
                 }}
-                title={`${axisLabels[xAxis]} ${allScores[xAxis].toFixed(1)} · ${axisLabels[yAxis]} ${allScores[yAxis].toFixed(1)} · Readiness ${readinessScore.toFixed(1)}`}
+                title={`${axisLabels[xAxis]}: ${allScores[xAxis].toFixed(1)}/5 · ${axisLabels[yAxis]}: ${allScores[yAxis].toFixed(1)}/5 · Readiness: ${readinessScore.toFixed(1)}/5`}
               >
                 <div className="matrix-point-label">{customerName} · {readinessScore.toFixed(1)} ready</div>
                 {allScores[xAxis].toFixed(1)}
@@ -1794,7 +1819,12 @@ function Results({ scores, customerName, useCaseName, onRestart, onExport, onAct
 
         <p style={{ fontSize: 12, color: 'var(--sa-mute)', marginTop: 20, lineHeight: 1.55 }}>
           <strong style={{ color: 'var(--sa-navy)' }}>Reading the chart:</strong>{' '}
-          The top-right quadrant is where you want use cases to land — the bubble size shows how ready the organisation is to deliver today (larger = more ready). Note that for Risk, lower is better, so the axis is inverted automatically.
+          Top-right is the sweet spot — both dimensions favourable. Bubble size = Readiness (larger = more ready to deliver today).{' '}
+          <strong style={{ color: 'var(--sa-navy)' }}>Direction guide:</strong>{' '}
+          <strong>Value</strong> — higher score = higher value (right/up = good).{' '}
+          <strong>Risk</strong> — higher score = higher risk, axis is inverted so right/up = <em>lower</em> risk (good).{' '}
+          <strong>Readiness</strong> — higher score = more ready (right/up = good).{' '}
+          <strong>Timeframe</strong> — higher score = easier/faster to deliver (right/up = good).
         </p>
       </div>
 
